@@ -65,3 +65,17 @@ body {
 .animate-pulse-glow {
   animation: pulse-glow 3s infinite;
 }
+
+/* Enable smooth inertia scrolling for overflow containers on iOS Safari */
+.overflow-y-auto, .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbars for sliders while keeping them scrollable */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE/Edge */
+  scrollbar-width: none;  /* Firefox */
+}

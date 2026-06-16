@@ -39,7 +39,7 @@ interface DashboardProps {
   onStartGame: () => void;
 }
 
-type TabType = 'play' | 'shop' | 'leaderboard' | 'achievements' | 'stats' | 'settings';
+type TabType = 'play' | 'missions' | 'shop' | 'leaderboard' | 'achievements' | 'stats' | 'settings';
 
 export const Dashboard: React.FC<DashboardProps> = ({
   stats,
@@ -66,6 +66,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const menuItems = [
     { id: 'play', label: 'Flight Deck', icon: Play },
+    { id: 'missions', label: 'Daily Missions', icon: ShieldCheck },
     { id: 'shop', label: 'Shop', icon: ShoppingBag, count: coins },
     { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
     { id: 'achievements', label: 'Badges', icon: Award, progress: `${achievements.filter(a => a.unlocked).length}/${achievements.length}` },
@@ -153,14 +154,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="flex-1 p-6 lg:p-10 overflow-y-auto bg-slate-950/20 min-h-0 pb-24 lg:pb-10">
         {/* PLAY TAB (MAIN MENU) */}
         {activeTab === 'play' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start h-full">
-            {/* Left: Fly preview box & Button */}
-            <div className="flex flex-col items-center text-center glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800/80 relative overflow-hidden">
+          <div className="flex flex-col items-center justify-center h-full max-w-sm mx-auto my-auto">
+            {/* Fly preview box & Button */}
+            <div className="w-full flex flex-col items-center text-center glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800/80 relative overflow-hidden shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 via-transparent to-transparent pointer-events-none"></div>
               
               {/* Flight Simulator Preview */}
               <div className="w-full aspect-[4/3] rounded-2xl bg-gradient-to-b from-sky-400/90 to-sky-200/90 border border-slate-300 flex items-center justify-center relative shadow-inner overflow-hidden mb-6">
-                {/* Scrolling Clouds Effect inside preview */}
                 <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/30 via-transparent to-transparent"></div>
                 <div className="absolute w-24 h-12 bg-white/60 rounded-full blur-[1px] animate-float left-4 top-6"></div>
                 <div className="absolute w-32 h-16 bg-white/50 rounded-full blur-[2px] right-6 bottom-12" style={{ animationDelay: '1.5s' }}></div>
@@ -168,16 +168,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 {/* Animated Floating Bird Preview */}
                 <div className="animate-float z-10 flex flex-col items-center">
                   <svg width="64" height="64" viewBox="0 0 48 48">
-                    {/* Tail */}
                     <path d="M 10 24 Q 0 16 2 24 Q 0 32 10 28 Z" fill={activeBird.wingColor} />
-                    {/* Body */}
                     <circle cx="24" cy="24" r="14" fill={activeBird.color} stroke="#1e293b" strokeWidth="2.5" />
-                    {/* Eye */}
                     <circle cx="29" cy="20" r="5.5" fill="#ffffff" stroke="#1e293b" strokeWidth="1.8" />
                     <circle cx="30.5" cy="20" r="2.2" fill={activeBird.eyeColor} />
-                    {/* Beak */}
                     <path d="M 36 22 L 44 25 L 34 29 Z" fill={activeBird.beakColor} stroke="#1e293b" strokeWidth="1.8" />
-                    {/* Wing */}
                     <ellipse cx="20" cy="25" rx="7.5" ry="5.5" fill={activeBird.wingColor} stroke="#1e293b" strokeWidth="1.8" />
                   </svg>
                 </div>
@@ -197,64 +192,64 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <span>Version 1.0.4</span>
               </div>
             </div>
+          </div>
+        )}
 
-            {/* Right: Daily challenges checklist */}
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800/80">
-              <h3 className="text-white text-lg font-bold flex items-center gap-2 mb-4">
-                <Award className="w-5 h-5 text-indigo-400" /> Daily Missions
-              </h3>
-              
-              <div className="space-y-4">
-                {dailyChallenges.map((challenge) => (
-                  <div
-                    key={challenge.id}
-                    className={`p-4 rounded-2xl border transition-colors flex gap-3.5 ${
-                      challenge.completed
-                        ? 'bg-emerald-500/5 border-emerald-500/30'
-                        : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-800'
-                    }`}
-                  >
-                    {/* Check icon */}
-                    <div className="mt-0.5 shrink-0">
-                      {challenge.completed ? (
-                        <CheckCircle className="w-5 h-5 text-emerald-400" />
-                      ) : (
-                        <Circle className="w-5 h-5 text-slate-600" />
-                      )}
+        {/* DAILY MISSIONS TAB */}
+        {activeTab === 'missions' && (
+          <div className="flex flex-col h-full">
+            <div className="pb-6 border-b border-slate-700/40">
+              <h2 className="text-3xl font-extrabold text-white">Daily Missions</h2>
+              <p className="text-slate-400 text-sm mt-1">Complete these objectives today to earn bonus coins.</p>
+            </div>
+            
+            <div className="space-y-4 mt-6 overflow-y-auto pr-1 flex-1 pb-6 animate-pulse-glow">
+              {dailyChallenges.map((challenge) => (
+                <div
+                  key={challenge.id}
+                  className={`p-5 rounded-2xl border transition-colors flex gap-4 ${
+                    challenge.completed
+                      ? 'bg-emerald-500/5 border-emerald-500/30'
+                      : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="mt-0.5 shrink-0">
+                    {challenge.completed ? (
+                      <CheckCircle className="w-6 h-6 text-emerald-400" />
+                    ) : (
+                      <Circle className="w-6 h-6 text-slate-600 animate-pulse" />
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start gap-2">
+                      <h4 className={`text-base font-bold truncate ${
+                        challenge.completed ? 'text-slate-400 line-through' : 'text-white'
+                      }`}>
+                        {challenge.description}
+                      </h4>
+                      <span className="text-amber-400 font-extrabold text-xs shrink-0 flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+                        <Coins className="w-3.5 h-3.5" /> +{challenge.reward}
+                      </span>
                     </div>
 
-                    {/* Progress details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start gap-2">
-                        <h4 className={`text-sm font-bold truncate ${
-                          challenge.completed ? 'text-slate-400 line-through' : 'text-white'
-                        }`}>
-                          {challenge.description}
-                        </h4>
-                        <span className="text-amber-400 font-extrabold text-xs shrink-0 flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
-                          +{challenge.reward} coins
-                        </span>
+                    <div className="mt-4">
+                      <div className="flex justify-between text-[11px] text-slate-500 font-semibold mb-1">
+                        <span>Target progress</span>
+                        <span>{challenge.progress} / {challenge.target}</span>
                       </div>
-
-                      {/* Progress bar */}
-                      <div className="mt-3">
-                        <div className="flex justify-between text-[10px] text-slate-500 font-semibold mb-1">
-                          <span>Target progress</span>
-                          <span>{challenge.progress} / {challenge.target}</span>
-                        </div>
-                        <div className="w-full h-1 bg-slate-950 rounded-full overflow-hidden border border-slate-800/40">
-                          <div
-                            className={`h-full rounded-full transition-all duration-300 ${
-                              challenge.completed ? 'bg-emerald-500' : 'bg-indigo-500'
-                            }`}
-                            style={{ width: `${Math.min(100, (challenge.progress / challenge.target) * 100)}%` }}
-                          ></div>
-                        </div>
+                      <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800/40">
+                        <div
+                          className={`h-full rounded-full transition-all duration-300 ${
+                            challenge.completed ? 'bg-emerald-500' : 'bg-indigo-500'
+                          }`}
+                          style={{ width: `${Math.min(100, (challenge.progress / challenge.target) * 100)}%` }}
+                        ></div>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -301,7 +296,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* 3. BOTTOM TAB NAVIGATION (Mobile Only) */}
-      <div className="flex lg:hidden fixed bottom-0 inset-x-0 bg-slate-950/90 border-t border-slate-800/60 backdrop-blur-md justify-between items-center py-2 px-3 z-15">
+      <div className="flex lg:hidden fixed bottom-0 inset-x-0 bg-slate-950/95 border-t border-slate-800/60 backdrop-blur-md justify-start items-center py-2 px-4 z-20 overflow-x-auto no-scrollbar flex-nowrap gap-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -309,8 +304,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as TabType)}
-              className={`flex flex-col items-center justify-center py-1.5 px-2 rounded-xl flex-1 text-center transition-all ${
-                isActive ? 'text-violet-400 font-bold' : 'text-slate-500 hover:text-slate-300'
+              className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl shrink-0 text-center transition-all min-w-[64px] ${
+                isActive ? 'text-violet-400 font-bold bg-slate-900/40' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
               <div className="relative">
