@@ -21,7 +21,7 @@ import {
 import { BIRD_SKINS } from '../utils/constants';
 import { BirdSvg } from './BirdSvg';
 import { sound } from '../utils/sound';
-import { generateDailyChallenges } from '../utils/daily';
+import { generateDailyChallenges, DAILY_REROLL_COST, MAX_DAILY_REROLLS } from '../utils/daily';
 
 interface DashboardProps {
   stats: PlayerStats;
@@ -39,6 +39,8 @@ interface DashboardProps {
   achievements: Achievement[];
   dailyChallenges: DailyChallenge[];
   setDailyChallenges: (val: DailyChallenge[]) => void;
+  dailyRerollsUsed: number;
+  setDailyRerollsUsed: (val: number | ((n: number) => number)) => void;
   scoreHistory: number[];
   onResetAll: () => void;
   onStartGame: () => void;
@@ -62,11 +64,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
   achievements,
   dailyChallenges,
   setDailyChallenges,
+  dailyRerollsUsed,
+  setDailyRerollsUsed,
   scoreHistory,
   onResetAll,
   onStartGame
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('play');
+  const [rerollFeedback, setRerollFeedback] = useState<string | null>(null);
 
   const activeBird = BIRD_SKINS.find((b) => b.id === settings.currentBird) || BIRD_SKINS[0];
 
@@ -80,10 +85,29 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }
   };
 
+  const rerollsLeft = Math.max(0, MAX_DAILY_REROLLS - dailyRerollsUsed);
+
   const handleRerollMissions = () => {
+    if (rerollsLeft <= 0) {
+      setRerollFeedback(`Daily reroll limit reached (${MAX_DAILY_REROLLS}/${MAX_DAILY_REROLLS} used today)!`);
+      sound.playHit();
+      setTimeout(() => setRerollFeedback(null), 2500);
+      return;
+    }
+    if (coins < DAILY_REROLL_COST) {
+      setRerollFeedback(`Not enough coins! Rerolling costs ${DAILY_REROLL_COST} coins.`);
+      sound.playHit();
+      setTimeout(() => setRerollFeedback(null), 2500);
+      return;
+    }
+
+    setCoins((c) => c - DAILY_REROLL_COST);
+    setDailyRerollsUsed((r) => r + 1);
     const newMissions = generateDailyChallenges(true);
     setDailyChallenges(newMissions);
     sound.playCoin();
+    setRerollFeedback(`Missions rerolled! (${rerollsLeft - 1} left today)`);
+    setTimeout(() => setRerollFeedback(null), 2500);
   };
 
   const menuItems = [
@@ -233,15 +257,36 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <h2 className="text-3xl font-extrabold text-white">Daily Missions</h2>
                 <p className="text-slate-400 text-sm mt-1">Complete these objectives today to earn bonus coins.</p>
               </div>
-              <button
-                onClick={handleRerollMissions}
-                title="Reroll new daily challenges"
-                className="flex items-center gap-2 bg-gradient-to-r from-violet-600/25 to-indigo-600/25 hover:from-violet-600/40 hover:to-indigo-600/40 border border-violet-500/40 text-violet-200 px-4 py-2 rounded-xl font-bold text-xs transition-all shadow-sm w-fit"
-              >
-                <Dices className="w-4 h-4 text-violet-400" />
-                <span>Reroll Missions</span>
-              </button>
+              <div className="flex flex-col sm:items-end gap-1.5">
+                <button
+                  onClick={handleRerollMissions}
+                  disabled={rerollsLeft <= 0 || coins < DAILY_REROLL_COST}
+                  title={rerollsLeft <= 0 ? "Daily reroll limit reached" : `Reroll missions for ${DAILY_REROLL_COST} coins`}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold text-xs transition-all shadow-sm w-fit ${
+                    rerollsLeft <= 0 || coins < DAILY_REROLL_COST
+                      ? 'bg-slate-900/60 border border-slate-800 text-slate-500 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-violet-600/30 to-indigo-600/30 hover:from-violet-600/50 hover:to-indigo-600/50 border border-violet-500/40 text-violet-200 active:scale-95'
+                  }`}
+                >
+                  <Dices className="w-4 h-4 text-violet-400" />
+                  <span>Reroll ({DAILY_REROLL_COST} Coins)</span>
+                  <span className="text-[10px] bg-slate-950/70 border border-violet-500/30 px-2 py-0.5 rounded-full text-violet-300">
+                    {rerollsLeft}/{MAX_DAILY_REROLLS} left
+                  </span>
+                </button>
+              </div>
             </div>
+
+            {/* Reroll feedback banner */}
+            {rerollFeedback && (
+              <div className={`mt-4 px-4 py-2 rounded-xl text-xs font-bold border transition-all animate-bounce ${
+                rerollFeedback.includes('Not enough') || rerollFeedback.includes('limit reached')
+                  ? 'bg-red-500/15 border-red-500/30 text-red-300'
+                  : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+              }`}>
+                {rerollFeedback}
+              </div>
+            )}
             
             <div className="space-y-4 mt-6 overflow-y-auto pr-1 flex-1 pb-6 animate-pulse-glow">
               {dailyChallenges.map((challenge) => (

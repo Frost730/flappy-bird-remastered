@@ -1,5 +1,8 @@
 import type { DailyChallenge } from '../types/game';
 
+export const DAILY_REROLL_COST = 25;
+export const MAX_DAILY_REROLLS = 3;
+
 interface MissionTemplate {
   description: string;
   type: 'score' | 'coins' | 'pipes' | 'games' | 'time';
@@ -77,19 +80,22 @@ export function generateDailyChallenges(forceRandom = false): DailyChallenge[] {
 
 export function checkDailyReset(
   lastDateStr: string | null,
-  currentChallenges: DailyChallenge[]
-): { reset: boolean; challenges: DailyChallenge[] } {
+  currentChallenges: DailyChallenge[],
+  currentRerolls = 0
+): { reset: boolean; challenges: DailyChallenge[]; rerollsUsed: number } {
   const todayStr = new Date().toDateString();
 
   if (!lastDateStr || lastDateStr !== todayStr || currentChallenges.length === 0) {
     return {
       reset: true,
-      challenges: generateDailyChallenges()
+      challenges: generateDailyChallenges(),
+      rerollsUsed: 0
     };
   }
 
   return {
     reset: false,
-    challenges: currentChallenges
+    challenges: currentChallenges,
+    rerollsUsed: currentRerolls
   };
 }

@@ -37,6 +37,7 @@ function App() {
   const [leaderboard, setLeaderboard] = useLocalStorage<LeaderboardEntry[]>('fbp_leaderboard', []);
   const [achievements, setAchievements] = useLocalStorage<Achievement[]>('fbp_achievements', INITIAL_ACHIEVEMENTS);
   const [dailyChallenges, setDailyChallenges] = useLocalStorage<DailyChallenge[]>('fbp_daily_challenges', []);
+  const [dailyRerollsUsed, setDailyRerollsUsed] = useLocalStorage<number>('fbp_daily_rerolls_used', 0);
   const [lastChallengeDate, setLastChallengeDate] = useLocalStorage<string | null>('fbp_last_challenge_date', null);
   const [scoreHistory, setScoreHistory] = useLocalStorage<number[]>('fbp_score_history', []);
 
@@ -54,9 +55,10 @@ function App() {
 
   // Daily Challenge Generation check
   useEffect(() => {
-    const { reset, challenges } = checkDailyReset(lastChallengeDate, dailyChallenges);
+    const { reset, challenges, rerollsUsed } = checkDailyReset(lastChallengeDate, dailyChallenges, dailyRerollsUsed);
     if (reset) {
       setDailyChallenges(challenges);
+      setDailyRerollsUsed(rerollsUsed);
       setLastChallengeDate(new Date().toDateString());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -242,6 +244,7 @@ function App() {
     setLeaderboard([]);
     setAchievements(INITIAL_ACHIEVEMENTS);
     setDailyChallenges(generateDailyChallenges());
+    setDailyRerollsUsed(0);
     setLastChallengeDate(new Date().toDateString());
     setScoreHistory([]);
     
@@ -271,6 +274,8 @@ function App() {
           achievements={achievements}
           dailyChallenges={dailyChallenges}
           setDailyChallenges={setDailyChallenges}
+          dailyRerollsUsed={dailyRerollsUsed}
+          setDailyRerollsUsed={setDailyRerollsUsed}
           scoreHistory={scoreHistory}
           onResetAll={handleResetAll}
           onStartGame={() => setActiveView('GAME')}
