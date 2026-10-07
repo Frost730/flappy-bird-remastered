@@ -52,16 +52,22 @@ export interface Achievement {
   target: number;
   unlocked: boolean;
   unlockedAt?: string;
+  category?: 'milestone' | 'skill' | 'collection' | 'secret';
+  rarity?: 'bronze' | 'silver' | 'gold' | 'diamond';
+  icon?: string;
+  reward?: number;
+  isSecret?: boolean;
 }
 
 export interface DailyChallenge {
   id: string;
   description: string;
-  type: 'score' | 'coins' | 'pipes';
+  type: 'score' | 'coins' | 'pipes' | 'games' | 'time';
   target: number;
   reward: number;
   progress: number;
   completed: boolean;
+  rarity?: 'easy' | 'medium' | 'hard' | 'legendary';
 }
 
 export interface LeaderboardEntry {

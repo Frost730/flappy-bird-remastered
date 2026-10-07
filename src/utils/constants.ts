@@ -179,45 +179,92 @@ export const THEMES: ThemeSkin[] = [
 ];
 
 export const INITIAL_ACHIEVEMENTS: Achievement[] = [
+  // --- BRONZE TIER ---
   {
     id: 'first_flight',
     title: 'First Flight',
-    description: 'Start your very first game of Flappy Bird Pro.',
+    description: 'Start your very first flight in Flappy Bird Pro.',
     progress: 0,
     target: 1,
-    unlocked: false
+    unlocked: false,
+    rarity: 'bronze',
+    icon: 'feather',
+    category: 'milestone',
+    reward: 20
   },
   {
     id: 'score_10',
     title: 'Double Digits',
-    description: 'Reach a score of 10 in a single run.',
+    description: 'Reach a score of 10 in a single flight.',
     progress: 0,
     target: 10,
-    unlocked: false
+    unlocked: false,
+    rarity: 'bronze',
+    icon: 'target',
+    category: 'skill',
+    reward: 25
   },
+  {
+    id: 'coin_50',
+    title: 'Pocket Change',
+    description: 'Collect 50 coins in total.',
+    progress: 0,
+    target: 50,
+    unlocked: false,
+    rarity: 'bronze',
+    icon: 'coins',
+    category: 'collection',
+    reward: 30
+  },
+  {
+    id: 'games_5',
+    title: 'Rookie Flyer',
+    description: 'Play 5 total flights.',
+    progress: 0,
+    target: 5,
+    unlocked: false,
+    rarity: 'bronze',
+    icon: 'compass',
+    category: 'milestone',
+    reward: 25
+  },
+  {
+    id: 'pipes_30',
+    title: 'Pipe Hopper',
+    description: 'Pass 30 total pipes across all runs.',
+    progress: 0,
+    target: 30,
+    unlocked: false,
+    rarity: 'bronze',
+    icon: 'shield',
+    category: 'skill',
+    reward: 30
+  },
+  {
+    id: 'time_60',
+    title: 'One Minute Aviator',
+    description: 'Accumulate 60 seconds of total flight time.',
+    progress: 0,
+    target: 60,
+    unlocked: false,
+    rarity: 'bronze',
+    icon: 'clock',
+    category: 'milestone',
+    reward: 25
+  },
+
+  // --- SILVER TIER ---
   {
     id: 'score_25',
     title: 'Skilled Pilot',
-    description: 'Reach a score of 25 in a single run.',
+    description: 'Reach a score of 25 in a single flight.',
     progress: 0,
     target: 25,
-    unlocked: false
-  },
-  {
-    id: 'score_50',
-    title: 'Pro Aviator',
-    description: 'Reach a score of 50 in a single run.',
-    progress: 0,
-    target: 50,
-    unlocked: false
-  },
-  {
-    id: 'score_100',
-    title: 'Flappy God',
-    description: 'Reach a score of 100 in a single run.',
-    progress: 0,
-    target: 100,
-    unlocked: false
+    unlocked: false,
+    rarity: 'silver',
+    icon: 'zap',
+    category: 'skill',
+    reward: 50
   },
   {
     id: 'coin_100',
@@ -225,7 +272,85 @@ export const INITIAL_ACHIEVEMENTS: Achievement[] = [
     description: 'Collect 100 coins in total.',
     progress: 0,
     target: 100,
-    unlocked: false
+    unlocked: false,
+    rarity: 'silver',
+    icon: 'coins',
+    category: 'collection',
+    reward: 50
+  },
+  {
+    id: 'pipes_100',
+    title: 'Gatekeeper',
+    description: 'Pass 100 total pipes across all flights.',
+    progress: 0,
+    target: 100,
+    unlocked: false,
+    rarity: 'silver',
+    icon: 'shield',
+    category: 'skill',
+    reward: 60
+  },
+  {
+    id: 'games_20',
+    title: 'Frequent Flyer',
+    description: 'Complete 20 flight attempts.',
+    progress: 0,
+    target: 20,
+    unlocked: false,
+    rarity: 'silver',
+    icon: 'compass',
+    category: 'milestone',
+    reward: 50
+  },
+  {
+    id: 'time_300',
+    title: 'Sky Nomad',
+    description: 'Fly for a total of 5 minutes (300 seconds).',
+    progress: 0,
+    target: 300,
+    unlocked: false,
+    rarity: 'silver',
+    icon: 'clock',
+    category: 'milestone',
+    reward: 60
+  },
+  {
+    id: 'skins_3',
+    title: 'Fashion Forward',
+    description: 'Unlock at least 3 bird skins in the shop.',
+    progress: 1,
+    target: 3,
+    unlocked: false,
+    rarity: 'silver',
+    icon: 'sparkles',
+    category: 'collection',
+    reward: 70
+  },
+  {
+    id: 'random_pilot',
+    title: 'Chaos Master',
+    description: 'Score 15+ in a flight with the 🎲 Random Skin equipped.',
+    progress: 0,
+    target: 15,
+    unlocked: false,
+    rarity: 'silver',
+    icon: 'dices',
+    category: 'skill',
+    reward: 75
+  },
+
+  // --- GOLD TIER ---
+  {
+    id: 'score_50',
+    title: 'Pro Aviator',
+    description: 'Reach a score of 50 in a single flight.',
+    progress: 0,
+    target: 50,
+    unlocked: false,
+    rarity: 'gold',
+    icon: 'trophy',
+    category: 'skill',
+    reward: 100
   },
   {
     id: 'coin_500',
@@ -233,22 +358,124 @@ export const INITIAL_ACHIEVEMENTS: Achievement[] = [
     description: 'Accumulate a total of 500 coins.',
     progress: 0,
     target: 500,
-    unlocked: false
+    unlocked: false,
+    rarity: 'gold',
+    icon: 'gem',
+    category: 'collection',
+    reward: 100
+  },
+  {
+    id: 'pipes_300',
+    title: 'Centurion of Skies',
+    description: 'Pass 300 total pipes across all runs.',
+    progress: 0,
+    target: 300,
+    unlocked: false,
+    rarity: 'gold',
+    icon: 'shield',
+    category: 'skill',
+    reward: 120
   },
   {
     id: 'skins_all',
-    title: 'Wardrobe Complete',
-    description: 'Unlock all 4 bird skins in the shop.',
-    progress: 1, // Start with 1 unlocked
-    target: 4,
-    unlocked: false
+    title: 'Wardrobe Monarch',
+    description: 'Unlock 6 different bird skins in the shop.',
+    progress: 1,
+    target: 6,
+    unlocked: false,
+    rarity: 'gold',
+    icon: 'crown',
+    category: 'collection',
+    reward: 150
   },
   {
-    id: 'time_300',
-    title: 'Frequent Flyer',
-    description: 'Fly for a total of 5 minutes (300 seconds) across all games.',
+    id: 'time_600',
+    title: 'Endurance Legend',
+    description: 'Fly for a total of 10 minutes (600 seconds).',
     progress: 0,
-    target: 300,
-    unlocked: false
+    target: 600,
+    unlocked: false,
+    rarity: 'gold',
+    icon: 'clock',
+    category: 'milestone',
+    reward: 125
+  },
+
+  // --- DIAMOND / SECRET TIER ---
+  {
+    id: 'score_100',
+    title: 'Flappy God',
+    description: 'Reach an unbelievable score of 100 in a single flight.',
+    progress: 0,
+    target: 100,
+    unlocked: false,
+    rarity: 'diamond',
+    icon: 'flame',
+    category: 'skill',
+    reward: 300
+  },
+  {
+    id: 'coin_1000',
+    title: 'Midas Emperor',
+    description: 'Accumulate a lifetime fortune of 1,000 coins.',
+    progress: 0,
+    target: 1000,
+    unlocked: false,
+    rarity: 'diamond',
+    icon: 'gem',
+    category: 'collection',
+    reward: 250
+  },
+  {
+    id: 'ninja_master',
+    title: 'Shadow Ascendant',
+    description: 'Score 20+ with the Shadow Shinobi skin.',
+    progress: 0,
+    target: 20,
+    unlocked: false,
+    rarity: 'diamond',
+    icon: 'feather',
+    category: 'secret',
+    isSecret: true,
+    reward: 150
+  },
+  {
+    id: 'dragon_flight',
+    title: 'Dragonlord',
+    description: 'Score 25+ with the Neon Dragon skin.',
+    progress: 0,
+    target: 25,
+    unlocked: false,
+    rarity: 'diamond',
+    icon: 'flame',
+    category: 'secret',
+    isSecret: true,
+    reward: 200
+  },
+  {
+    id: 'cyber_voyage',
+    title: 'Grid Runner',
+    description: 'Score 20+ in the Neon Grid cyberpunk theme.',
+    progress: 0,
+    target: 20,
+    unlocked: false,
+    rarity: 'gold',
+    icon: 'zap',
+    category: 'secret',
+    isSecret: true,
+    reward: 120
+  },
+  {
+    id: 'night_owl',
+    title: 'Nocturnal Ace',
+    description: 'Score 20+ in the Midnight City theme.',
+    progress: 0,
+    target: 20,
+    unlocked: false,
+    rarity: 'gold',
+    icon: 'compass',
+    category: 'secret',
+    isSecret: true,
+    reward: 120
   }
 ];

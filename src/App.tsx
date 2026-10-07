@@ -62,6 +62,16 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Merge newly added badges into stored achievement list
+  useEffect(() => {
+    const existingIds = new Set(achievements.map((a) => a.id));
+    const missing = INITIAL_ACHIEVEMENTS.filter((a) => !existingIds.has(a.id));
+    if (missing.length > 0) {
+      setAchievements((prev) => [...prev, ...missing]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Show a slide-down toast when achievement unlocks
   const triggerAchievementToast = (title: string) => {
     setActiveToast(title);
@@ -127,12 +137,17 @@ function App() {
         progress = Math.max(progress, coinsCollected);
       } else if (challenge.type === 'pipes') {
         progress += score;
+      } else if (challenge.type === 'games') {
+        progress += 1;
+      } else if (challenge.type === 'time') {
+        progress += flightSeconds;
       }
 
       const completed = progress >= challenge.target;
       if (completed && !challenge.completed) {
         // Award bonus coins for finishing a daily mission!
         setCoins((prev) => prev + challenge.reward);
+        triggerAchievementToast(`Daily Mission Complete! +${challenge.reward} coins`);
       }
 
       return { ...challenge, progress, completed };
@@ -147,22 +162,56 @@ function App() {
 
       if (achievement.id === 'first_flight') {
         progress = 1;
-      } else if (achievement.id === 'score_10') {
+      } else if (
+        achievement.id === 'score_10' ||
+        achievement.id === 'score_25' ||
+        achievement.id === 'score_50' ||
+        achievement.id === 'score_100'
+      ) {
         progress = Math.max(progress, score);
-      } else if (achievement.id === 'score_25') {
-        progress = Math.max(progress, score);
-      } else if (achievement.id === 'score_50') {
-        progress = Math.max(progress, score);
-      } else if (achievement.id === 'score_100') {
-        progress = Math.max(progress, score);
-      } else if (achievement.id === 'coin_100') {
+      } else if (
+        achievement.id === 'coin_50' ||
+        achievement.id === 'coin_100' ||
+        achievement.id === 'coin_500' ||
+        achievement.id === 'coin_1000'
+      ) {
         progress = nextCoins;
-      } else if (achievement.id === 'coin_500') {
-        progress = nextCoins;
-      } else if (achievement.id === 'skins_all') {
-        progress = unlockedBirds.length;
-      } else if (achievement.id === 'time_300') {
+      } else if (achievement.id === 'games_5' || achievement.id === 'games_20') {
+        progress = nextGamesPlayed;
+      } else if (
+        achievement.id === 'pipes_30' ||
+        achievement.id === 'pipes_100' ||
+        achievement.id === 'pipes_300'
+      ) {
+        progress = nextPipesPassed;
+      } else if (
+        achievement.id === 'time_60' ||
+        achievement.id === 'time_300' ||
+        achievement.id === 'time_600'
+      ) {
         progress = nextFlightTime;
+      } else if (achievement.id === 'skins_3' || achievement.id === 'skins_all') {
+        progress = unlockedBirds.length;
+      } else if (achievement.id === 'random_pilot') {
+        if (settings.currentBird === 'random') {
+          progress = Math.max(progress, score);
+        }
+      } else if (achievement.id === 'ninja_master') {
+        if (settings.currentBird === 'ninja') {
+          progress = Math.max(progress, score);
+        }
+      } else if (achievement.id === 'dragon_flight') {
+        if (settings.currentBird === 'toxic') {
+          progress = Math.max(progress, score);
+        }
+      } else if (achievement.id === 'cyber_voyage') {
+        if (settings.currentTheme === 'cyberpunk') {
+          progress = Math.max(progress, score);
+        }
+      } else if (achievement.id === 'night_owl') {
+        if (settings.currentTheme === 'night') {
+          progress = Math.max(progress, score);
+        }
       }
 
       const unlocked = progress >= achievement.target;
@@ -170,8 +219,10 @@ function App() {
 
       if (unlocked && !achievement.unlocked) {
         unlockedAt = new Date().toLocaleDateString();
-        // Fire celebration toast
-        triggerAchievementToast(achievement.title);
+        if (achievement.reward) {
+          setCoins((prev) => prev + achievement.reward!);
+        }
+        triggerAchievementToast(`${achievement.title} (+${achievement.reward || 50} coins)`);
       }
 
       return { ...achievement, progress, unlocked, unlockedAt };
@@ -219,6 +270,7 @@ function App() {
           leaderboard={leaderboard}
           achievements={achievements}
           dailyChallenges={dailyChallenges}
+          setDailyChallenges={setDailyChallenges}
           scoreHistory={scoreHistory}
           onResetAll={handleResetAll}
           onStartGame={() => setActiveView('GAME')}

@@ -21,6 +21,7 @@ import {
 import { BIRD_SKINS } from '../utils/constants';
 import { BirdSvg } from './BirdSvg';
 import { sound } from '../utils/sound';
+import { generateDailyChallenges } from '../utils/daily';
 
 interface DashboardProps {
   stats: PlayerStats;
@@ -37,6 +38,7 @@ interface DashboardProps {
   leaderboard: LeaderboardEntry[];
   achievements: Achievement[];
   dailyChallenges: DailyChallenge[];
+  setDailyChallenges: (val: DailyChallenge[]) => void;
   scoreHistory: number[];
   onResetAll: () => void;
   onStartGame: () => void;
@@ -59,6 +61,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   leaderboard,
   achievements,
   dailyChallenges,
+  setDailyChallenges,
   scoreHistory,
   onResetAll,
   onStartGame
@@ -75,6 +78,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
       setSettings({ ...settings, currentBird: chosen });
       sound.playCoin();
     }
+  };
+
+  const handleRerollMissions = () => {
+    const newMissions = generateDailyChallenges(true);
+    setDailyChallenges(newMissions);
+    sound.playCoin();
   };
 
   const menuItems = [
@@ -219,9 +228,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* DAILY MISSIONS TAB */}
         {activeTab === 'missions' && (
           <div className="flex flex-col h-full">
-            <div className="pb-6 border-b border-slate-700/40">
-              <h2 className="text-3xl font-extrabold text-white">Daily Missions</h2>
-              <p className="text-slate-400 text-sm mt-1">Complete these objectives today to earn bonus coins.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-700/40 gap-4">
+              <div>
+                <h2 className="text-3xl font-extrabold text-white">Daily Missions</h2>
+                <p className="text-slate-400 text-sm mt-1">Complete these objectives today to earn bonus coins.</p>
+              </div>
+              <button
+                onClick={handleRerollMissions}
+                title="Reroll new daily challenges"
+                className="flex items-center gap-2 bg-gradient-to-r from-violet-600/25 to-indigo-600/25 hover:from-violet-600/40 hover:to-indigo-600/40 border border-violet-500/40 text-violet-200 px-4 py-2 rounded-xl font-bold text-xs transition-all shadow-sm w-fit"
+              >
+                <Dices className="w-4 h-4 text-violet-400" />
+                <span>Reroll Missions</span>
+              </button>
             </div>
             
             <div className="space-y-4 mt-6 overflow-y-auto pr-1 flex-1 pb-6 animate-pulse-glow">
@@ -244,11 +263,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start gap-2">
-                      <h4 className={`text-base font-bold truncate ${
-                        challenge.completed ? 'text-slate-400 line-through' : 'text-white'
-                      }`}>
-                        {challenge.description}
-                      </h4>
+                      <div className="flex items-center gap-2 flex-wrap min-w-0">
+                        <h4 className={`text-base font-bold truncate ${
+                          challenge.completed ? 'text-slate-400 line-through' : 'text-white'
+                        }`}>
+                          {challenge.description}
+                        </h4>
+                        {challenge.rarity && (
+                          <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border shrink-0 ${
+                            challenge.rarity === 'legendary' ? 'border-amber-500/40 text-amber-300 bg-amber-500/10' :
+                            challenge.rarity === 'hard' ? 'border-violet-500/40 text-violet-300 bg-violet-500/10' :
+                            challenge.rarity === 'medium' ? 'border-sky-500/40 text-sky-300 bg-sky-500/10' :
+                            'border-emerald-500/40 text-emerald-300 bg-emerald-500/10'
+                          }`}>
+                            {challenge.rarity}
+                          </span>
+                        )}
+                      </div>
                       <span className="text-amber-400 font-extrabold text-xs shrink-0 flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
                         <Coins className="w-3.5 h-3.5" /> +{challenge.reward}
                       </span>
