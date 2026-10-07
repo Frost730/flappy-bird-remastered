@@ -300,6 +300,8 @@ function App() {
           difficulty={settings.difficulty || 'dynamic'}
           onDifficultyChange={(newDiff) => setSettings({ ...settings, difficulty: newDiff })}
           unlockedBirds={unlockedBirds}
+          unlockedPipes={unlockedPipes}
+          unlockedThemes={unlockedThemes}
           currentHighScore={stats.highScore}
           isLeaderboardWorthy={isLeaderboardWorthy}
           onSaveLeaderboard={handleSaveLeaderboard}

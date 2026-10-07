@@ -9,6 +9,18 @@ export function drawBackground(
   ctx.clearRect(0, 0, width, height);
 
   switch (themeId) {
+    case 'sunset':
+      drawSunsetTheme(ctx, width, height, scrollX);
+      break;
+    case 'candy':
+      drawCandyTheme(ctx, width, height, scrollX);
+      break;
+    case 'matrix':
+      drawMatrixTheme(ctx, width, height, scrollX);
+      break;
+    case 'inferno':
+      drawInfernoTheme(ctx, width, height, scrollX);
+      break;
     case 'night':
       drawNightTheme(ctx, width, height, scrollX);
       break;
@@ -230,6 +242,188 @@ function drawMilitaryTheme(ctx: CanvasRenderingContext2D, width: number, height:
   }
 }
 
+// 5. SUNSET THEME
+function drawSunsetTheme(ctx: CanvasRenderingContext2D, width: number, height: number, scrollX: number) {
+  // Rich Sunset Sky Gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, height - 112);
+  grad.addColorStop(0, '#3b0764'); // Deep dusk violet
+  grad.addColorStop(0.35, '#7e22ce'); // Purple
+  grad.addColorStop(0.65, '#ea580c'); // Warm fiery orange
+  grad.addColorStop(1, '#fde047'); // Golden horizon
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, width, height);
+
+  // Radiant Golden Setting Sun
+  const sunY = height - 190;
+  ctx.fillStyle = 'rgba(251, 191, 36, 0.2)';
+  ctx.beginPath();
+  ctx.arc(width * 0.5, sunY, 55, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#fef08a';
+  ctx.beginPath();
+  ctx.arc(width * 0.5, sunY, 32, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Distant Island Mountains (Parallax 0.25)
+  ctx.fillStyle = '#4c1d95';
+  const islandOffset = (scrollX * 0.25) % 360;
+  for (let i = -1; i < width / 180 + 2; i++) {
+    const ix = i * 180 - islandOffset;
+    ctx.beginPath();
+    ctx.moveTo(ix, height - 112);
+    ctx.lineTo(ix + 60, height - 160);
+    ctx.lineTo(ix + 120, height - 112);
+    ctx.fill();
+  }
+
+  // Shimmering Sunset Ocean Waves (Parallax 0.5)
+  ctx.fillStyle = '#9a3412';
+  ctx.fillRect(0, height - 128, width, 16);
+  ctx.strokeStyle = 'rgba(254, 240, 138, 0.6)';
+  ctx.lineWidth = 1.5;
+  const waveOffset = (scrollX * 0.5) % 40;
+  for (let wx = -waveOffset; wx < width + 40; wx += 24) {
+    ctx.beginPath();
+    ctx.moveTo(wx, height - 122);
+    ctx.lineTo(wx + 14, height - 122);
+    ctx.stroke();
+  }
+}
+
+// 6. CANDY WONDERLAND THEME
+function drawCandyTheme(ctx: CanvasRenderingContext2D, width: number, height: number, scrollX: number) {
+  // Cotton candy sky gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, height);
+  grad.addColorStop(0, '#f472b6'); // Pink
+  grad.addColorStop(0.5, '#fbcfe8'); // Soft rose
+  grad.addColorStop(1, '#e9d5ff'); // Lavender
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, width, height);
+
+  // Marshmallow Clouds (Parallax 0.2)
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+  const cloudOffset = (scrollX * 0.2) % 350;
+  for (let i = -1; i < width / 350 + 2; i++) {
+    const cx = i * 350 - cloudOffset;
+    drawCloud(ctx, cx + 60, 100);
+    drawCloud(ctx, cx + 240, 60);
+  }
+
+  // Gumdrop Hills (Parallax 0.4)
+  ctx.fillStyle = '#f43f5e';
+  const hillOffset = (scrollX * 0.4) % 240;
+  for (let i = -1; i < width / 120 + 2; i++) {
+    const hx = i * 120 - hillOffset;
+    ctx.beginPath();
+    ctx.arc(hx + 60, height - 112, 50, 0, Math.PI, true);
+    ctx.fill();
+  }
+
+  // Swirled Lollipop Trees (Parallax 0.7)
+  const lollyOffset = (scrollX * 0.7) % 200;
+  for (let i = -1; i < width / 160 + 2; i++) {
+    const lx = i * 160 - lollyOffset + 40;
+    const ly = height - 170;
+    // White stick
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(lx - 3, ly, 6, 58);
+    // Lollipop candy head
+    ctx.fillStyle = i % 2 === 0 ? '#ec4899' : '#06b6d4';
+    ctx.beginPath();
+    ctx.arc(lx, ly, 22, 0, Math.PI * 2);
+    ctx.fill();
+    // Inner swirl
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(lx, ly, 12, 0, Math.PI * 1.5);
+    ctx.stroke();
+  }
+}
+
+// 7. MATRIX TERMINAL THEME
+function drawMatrixTheme(ctx: CanvasRenderingContext2D, width: number, height: number, scrollX: number) {
+  // Deep CRT monitor background
+  ctx.fillStyle = '#020b05';
+  ctx.fillRect(0, 0, width, height);
+
+  // Digital Code Streams (Parallax 0.3)
+  ctx.fillStyle = 'rgba(34, 197, 94, 0.75)'; // Phosphor green
+  ctx.font = 'bold 12px monospace';
+  const codeOffset = (scrollX * 0.3) % 60;
+  const chars = ['0', '1', 'X', '7', 'Z', '#', '%', '9'];
+
+  for (let col = 0; col < width / 26 + 1; col++) {
+    const x = col * 26 - codeOffset;
+    const streamY = ((col * 47 + scrollX * 0.8) % (height - 112));
+    for (let row = 0; row < 6; row++) {
+      const y = (streamY + row * 18) % (height - 112);
+      const ch = chars[(col + row) % chars.length];
+      const alpha = 0.9 - row * 0.15;
+      ctx.fillStyle = `rgba(74, 222, 128, ${Math.max(0.1, alpha)})`;
+      ctx.fillText(ch, x, y);
+    }
+  }
+
+  // Background Mainframe Racks (Parallax 0.5)
+  ctx.fillStyle = 'rgba(5, 46, 22, 0.4)';
+  ctx.strokeStyle = 'rgba(16, 185, 129, 0.2)';
+  ctx.lineWidth = 1;
+  const rackOffset = (scrollX * 0.5) % 180;
+  for (let i = -1; i < width / 90 + 2; i++) {
+    const rx = i * 90 - rackOffset;
+    ctx.fillRect(rx, height - 190, 60, 78);
+    ctx.strokeRect(rx, height - 190, 60, 78);
+  }
+}
+
+// 8. INFERNO MAGMA PEAKS THEME
+function drawInfernoTheme(ctx: CanvasRenderingContext2D, width: number, height: number, scrollX: number) {
+  // Volcanic Ash & Smoke Gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, height);
+  grad.addColorStop(0, '#1c1917'); // Black coal
+  grad.addColorStop(0.5, '#450a0a'); // Dark blood red
+  grad.addColorStop(1, '#991b1b'); // Magma glow
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, width, height);
+
+  // Rising fiery ember specks
+  ctx.fillStyle = '#f97316';
+  for (let e = 0; e < 15; e++) {
+    const ex = (e * 67 + scrollX * 0.2) % width;
+    const ey = (height - 130 - (e * 43 + scrollX * 0.6) % 250);
+    const sz = (e % 3) + 1.5;
+    ctx.beginPath();
+    ctx.arc(ex, ey, sz, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Jagged Obsidian Volcano Peaks (Parallax 0.3)
+  ctx.fillStyle = '#1c1917';
+  ctx.strokeStyle = '#ef4444';
+  ctx.lineWidth = 2;
+  const peakOffset = (scrollX * 0.3) % 280;
+  for (let i = -1; i < width / 140 + 2; i++) {
+    const px = i * 140 - peakOffset;
+    ctx.beginPath();
+    ctx.moveTo(px, height - 112);
+    ctx.lineTo(px + 45, height - 200 - ((i * 17) % 40));
+    ctx.lineTo(px + 90, height - 112);
+    ctx.fill();
+    ctx.stroke();
+
+    // Cascading lava flow line down the peak
+    ctx.strokeStyle = '#fb923c';
+    ctx.beginPath();
+    ctx.moveTo(px + 45, height - 200 - ((i * 17) % 40));
+    ctx.lineTo(px + 50, height - 140);
+    ctx.lineTo(px + 42, height - 112);
+    ctx.stroke();
+    ctx.strokeStyle = '#ef4444';
+  }
+}
+
 // Helper to draw ground floor scroll
 export function drawGround(
   ctx: CanvasRenderingContext2D,
@@ -257,6 +451,22 @@ export function drawGround(
     fillStyle = '#7a705e';
     borderStyle = '#3f392f';
     patternStyle = '#5e5647';
+  } else if (themeId === 'sunset') {
+    fillStyle = '#7c2d12';
+    borderStyle = '#ea580c';
+    patternStyle = '#9a3412';
+  } else if (themeId === 'candy') {
+    fillStyle = '#db2777';
+    borderStyle = '#f43f5e';
+    patternStyle = '#fbcfe8';
+  } else if (themeId === 'matrix') {
+    fillStyle = '#022c22';
+    borderStyle = '#10b981';
+    patternStyle = '#059669';
+  } else if (themeId === 'inferno') {
+    fillStyle = '#18181b';
+    borderStyle = '#dc2626';
+    patternStyle = '#991b1b';
   }
 
   // Draw ground main block
@@ -265,7 +475,7 @@ export function drawGround(
 
   // Draw top border line
   ctx.strokeStyle = borderStyle;
-  ctx.lineWidth = themeId === 'cyberpunk' ? 4 : 2;
+  ctx.lineWidth = themeId === 'cyberpunk' || themeId === 'matrix' ? 4 : 2;
   ctx.beginPath();
   ctx.moveTo(0, gy);
   ctx.lineTo(width, gy);
@@ -282,13 +492,25 @@ export function drawGround(
     ctx.stroke();
   }
 
-  // Special decorative details for Cyberpunk (neon grid base)
+  // Special decorative details for Cyberpunk & Matrix
   if (themeId === 'cyberpunk') {
     ctx.fillStyle = '#06b6d4'; // Cyan glowing dots on the ground
     for (let x = -hatchOffset; x < width + 24; x += 48) {
       ctx.beginPath();
       ctx.arc(x + 10, gy + 30, 2, 0, Math.PI * 2);
       ctx.fill();
+    }
+  } else if (themeId === 'matrix') {
+    ctx.fillStyle = '#22c55e'; // Phosphor green square nodes
+    for (let x = -hatchOffset; x < width + 24; x += 36) {
+      ctx.fillRect(x + 12, gy + 22, 3, 3);
+    }
+  } else if (themeId === 'candy') {
+    // Sugar sprinkles
+    const sprinkleColors = ['#fde047', '#38bdf8', '#ffffff'];
+    for (let x = -hatchOffset; x < width + 24; x += 32) {
+      ctx.fillStyle = sprinkleColors[Math.abs(Math.floor(x)) % sprinkleColors.length];
+      ctx.fillRect(x + 8, gy + 20, 6, 2.5);
     }
   }
 }

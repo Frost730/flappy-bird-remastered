@@ -205,39 +205,55 @@ export const Shop: React.FC<ShopProps> = ({
         {/* 2. PIPE SKINS TAB */}
         {activeTab === 'pipes' &&
           PIPE_SKINS.map((pipe) => {
-            const isUnlocked = unlockedPipes.includes(pipe.id);
+            const isUnlocked = pipe.id === 'random' || pipe.cost === 0 || unlockedPipes.includes(pipe.id);
             const isActive = settings.currentPipe === pipe.id;
             return (
               <div
                 key={pipe.id}
                 className={`glass-panel p-5 rounded-2xl flex flex-col justify-between border transition-all duration-300 hover:scale-[1.02] ${
-                  isActive ? 'border-violet-500 shadow-md shadow-violet-500/10' : 'border-slate-800 hover:border-slate-700'
+                  isActive
+                    ? 'border-violet-500 shadow-md shadow-violet-500/10'
+                    : pipe.id === 'random'
+                    ? 'border-pink-500/40 bg-gradient-to-b from-pink-500/5 to-slate-900/60 hover:border-pink-500/60'
+                    : 'border-slate-800 hover:border-slate-700'
                 }`}
               >
                 <div className="flex flex-col items-center">
+                  {pipe.id === 'random' && (
+                    <span className="mb-2 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-pink-500/40 text-pink-300 bg-pink-500/10 shadow-sm flex items-center gap-1">
+                      <Dices className="w-3 h-3 text-pink-400" /> Surprise Roulette
+                    </span>
+                  )}
                   {/* Pipe Preview */}
                   <div className="w-24 h-24 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-center relative mb-4 overflow-hidden">
-                    {/* Visual representation of pipes */}
-                    <div className="flex flex-col gap-6 items-center">
-                      <div
-                        className="w-10 h-8 rounded-b border border-slate-800"
-                        style={{
-                          background: `linear-gradient(90deg, ${pipe.primaryColor}, ${pipe.accentColor}, ${pipe.primaryColor})`,
-                          boxShadow: pipe.glowColor ? `0 0 10px ${pipe.glowColor}` : 'none'
-                        }}
-                      ></div>
-                      <div
-                        className="w-10 h-8 rounded-t border border-slate-800"
-                        style={{
-                          background: `linear-gradient(90deg, ${pipe.primaryColor}, ${pipe.accentColor}, ${pipe.primaryColor})`,
-                          boxShadow: pipe.glowColor ? `0 0 10px ${pipe.glowColor}` : 'none'
-                        }}
-                      ></div>
-                    </div>
+                    {pipe.id === 'random' ? (
+                      <div className="flex flex-col items-center justify-center animate-pulse">
+                        <Dices className="w-8 h-8 text-pink-400 mb-1" />
+                        <span className="text-[10px] text-pink-300 font-extrabold uppercase tracking-wider">All Unlocked</span>
+                      </div>
+                    ) : (
+                      /* Visual representation of pipes */
+                      <div className="flex flex-col gap-6 items-center">
+                        <div
+                          className="w-10 h-8 rounded-b border border-slate-800"
+                          style={{
+                            background: `linear-gradient(90deg, ${pipe.primaryColor}, ${pipe.accentColor}, ${pipe.primaryColor})`,
+                            boxShadow: pipe.glowColor ? `0 0 10px ${pipe.glowColor}` : 'none'
+                          }}
+                        ></div>
+                        <div
+                          className="w-10 h-8 rounded-t border border-slate-800"
+                          style={{
+                            background: `linear-gradient(90deg, ${pipe.primaryColor}, ${pipe.accentColor}, ${pipe.primaryColor})`,
+                            boxShadow: pipe.glowColor ? `0 0 10px ${pipe.glowColor}` : 'none'
+                          }}
+                        ></div>
+                      </div>
+                    )}
                   </div>
                   <h3 className="text-white text-lg font-bold">{pipe.name}</h3>
                   <p className="text-slate-400 text-xs mt-1">
-                    {pipe.cost === 0 ? 'Default pipes' : `Unlocks for ${pipe.cost} coins`}
+                    {pipe.id === 'random' ? 'Always free' : pipe.cost === 0 ? 'Default pipes' : `Unlocks for ${pipe.cost} coins`}
                   </p>
                 </div>
 
@@ -271,22 +287,69 @@ export const Shop: React.FC<ShopProps> = ({
         {/* 3. THEMES TAB */}
         {activeTab === 'themes' &&
           THEMES.map((theme) => {
-            const isUnlocked = unlockedThemes.includes(theme.id);
+            const isUnlocked = theme.id === 'random' || theme.cost === 0 || unlockedThemes.includes(theme.id);
             const isActive = settings.currentTheme === theme.id;
             return (
               <div
                 key={theme.id}
                 className={`glass-panel p-5 rounded-2xl flex flex-col justify-between border transition-all duration-300 hover:scale-[1.02] ${
-                  isActive ? 'border-violet-500 shadow-md shadow-violet-500/10' : 'border-slate-800 hover:border-slate-700'
+                  isActive
+                    ? 'border-violet-500 shadow-md shadow-violet-500/10'
+                    : theme.id === 'random'
+                    ? 'border-pink-500/40 bg-gradient-to-b from-pink-500/5 to-slate-900/60 hover:border-pink-500/60'
+                    : 'border-slate-800 hover:border-slate-700'
                 }`}
               >
                 <div className="flex flex-col items-center">
+                  {theme.id === 'random' && (
+                    <span className="mb-2 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-pink-500/40 text-pink-300 bg-pink-500/10 shadow-sm flex items-center gap-1">
+                      <Dices className="w-3 h-3 text-pink-400" /> Surprise Roulette
+                    </span>
+                  )}
                   {/* Theme Preview */}
                   <div
                     className="w-full h-24 rounded-xl border border-slate-800 mb-4 overflow-hidden relative"
                     style={{ background: theme.skyColor }}
                   >
-                    {/* Tiny visual elements representing themes */}
+                    {theme.id === 'random' && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-tr from-indigo-900/60 via-purple-900/40 to-pink-900/60 backdrop-blur-[1px]">
+                        <Dices className="w-6 h-6 text-pink-300 animate-bounce mb-1" />
+                        <span className="text-[10px] text-pink-200 font-black tracking-wider uppercase">Rotates Every Flight</span>
+                      </div>
+                    )}
+                    {theme.id === 'sunset' && (
+                      <>
+                        <div className="absolute top-2 right-8 w-6 h-6 bg-yellow-300 rounded-full blur-[1px]"></div>
+                        <div className="absolute bottom-0 w-full h-6 bg-[#7c2d12] border-t border-orange-500">
+                          <div className="absolute -top-4 left-6 w-2 h-5 bg-[#3b0764] rounded-t"></div>
+                          <div className="absolute -top-3 left-12 w-2 h-4 bg-[#3b0764] rounded-t"></div>
+                        </div>
+                      </>
+                    )}
+                    {theme.id === 'candy' && (
+                      <>
+                        <div className="absolute top-2 left-6 w-8 h-4 bg-white/80 rounded-full blur-[1px]"></div>
+                        <div className="absolute bottom-0 w-full h-6 bg-[#db2777] border-t border-pink-400">
+                          <div className="absolute -top-3 left-6 w-4 h-4 bg-pink-300 rounded-full"></div>
+                          <div className="absolute -top-4 left-12 w-5 h-5 bg-cyan-300 rounded-full"></div>
+                        </div>
+                      </>
+                    )}
+                    {theme.id === 'matrix' && (
+                      <div className="absolute inset-0 bg-[#020b05] p-2 flex flex-col justify-around font-mono text-[9px] text-emerald-400 select-none opacity-80">
+                        <div>0100110 10101</div>
+                        <div>1101001 01101</div>
+                        <div>0010111 11000</div>
+                      </div>
+                    )}
+                    {theme.id === 'inferno' && (
+                      <>
+                        <div className="absolute bottom-0 w-full h-6 bg-[#18181b] border-t border-red-600">
+                          <div className="absolute -top-4 left-4 w-6 h-5 bg-[#450a0a] rotate-45"></div>
+                          <div className="absolute -top-5 left-12 w-8 h-6 bg-[#450a0a] rotate-45"></div>
+                        </div>
+                      </>
+                    )}
                     {theme.id === 'classic' && (
                       <div className="absolute bottom-0 w-full h-6 bg-[#ddd896] border-t border-slate-800">
                         <div className="absolute -top-3 left-4 w-6 h-6 bg-[#55b04c] rounded-full"></div>
@@ -303,11 +366,9 @@ export const Shop: React.FC<ShopProps> = ({
                       </>
                     )}
                     {theme.id === 'cyberpunk' && (
-                      <>
-                        <div className="absolute bottom-0 w-full h-6 bg-[#06060c] border-t border-pink-500">
-                          <div className="absolute inset-0 opacity-10 bg-[linear-gradient(90deg,transparent_50%,rgba(6,182,212,0.5)_50%),linear-gradient(rgba(6,182,212,0.5)_50%,transparent_50%)] bg-[size:10px_10px]"></div>
-                        </div>
-                      </>
+                      <div className="absolute bottom-0 w-full h-6 bg-[#06060c] border-t border-pink-500">
+                        <div className="absolute inset-0 opacity-10 bg-[linear-gradient(90deg,transparent_50%,rgba(6,182,212,0.5)_50%),linear-gradient(rgba(6,182,212,0.5)_50%,transparent_50%)] bg-[size:10px_10px]"></div>
+                      </div>
                     )}
                     {theme.id === 'military' && (
                       <div className="absolute bottom-0 w-full h-6 bg-[#7a705e] border-t border-[#3f392f]">
@@ -319,7 +380,7 @@ export const Shop: React.FC<ShopProps> = ({
                   <h3 className="text-white text-lg font-bold">{theme.name}</h3>
                   <p className="text-slate-400 text-xs text-center mt-2 px-2 leading-relaxed">{theme.description}</p>
                   <p className="text-slate-400 text-xs mt-3 font-semibold">
-                    {theme.cost === 0 ? 'Free starter theme' : `Unlocks for ${theme.cost} coins`}
+                    {theme.id === 'random' ? 'Always free' : theme.cost === 0 ? 'Free starter theme' : `Unlocks for ${theme.cost} coins`}
                   </p>
                 </div>
 

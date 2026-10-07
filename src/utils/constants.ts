@@ -101,12 +101,66 @@ export const BIRD_SKINS: BirdSkin[] = [
 
 export const PIPE_SKINS: PipeSkin[] = [
   {
+    id: 'random',
+    name: '🎲 Random Pipes',
+    cost: 0,
+    unlocked: true,
+    primaryColor: '#ec4899',
+    accentColor: '#8b5cf6',
+    glowColor: '#06b6d4'
+  },
+  {
     id: 'classic',
     name: 'Classic Green',
     cost: 0,
     unlocked: true,
     primaryColor: '#22c55e', // green 500
     accentColor: '#4ade80'   // green 400
+  },
+  {
+    id: 'gold',
+    name: 'Midas Gold',
+    cost: 140,
+    unlocked: false,
+    primaryColor: '#d97706', // amber 600
+    accentColor: '#fbbf24',  // amber 400
+    glowColor: '#f59e0b'
+  },
+  {
+    id: 'frost',
+    name: 'Glacial Crystal',
+    cost: 160,
+    unlocked: false,
+    primaryColor: '#0284c7', // sky 600
+    accentColor: '#38bdf8',  // sky 400
+    glowColor: '#7dd3fc'
+  },
+  {
+    id: 'lava',
+    name: 'Inferno Magma',
+    cost: 200,
+    unlocked: false,
+    primaryColor: '#991b1b', // red 800
+    accentColor: '#f97316',  // orange 500
+    glowColor: '#ef4444'
+  },
+  {
+    id: 'candy',
+    name: 'Sugar Swirl',
+    cost: 150,
+    unlocked: false,
+    primaryColor: '#e11d48', // rose 600
+    accentColor: '#ffffff',  // pure white sugar stripe
+    glowColor: '#fb7185'
+  },
+  {
+    id: 'toxic',
+    name: 'Toxic Slime',
+    cost: 220,
+    unlocked: false,
+    primaryColor: '#4d7c0f', // lime 700
+    accentColor: '#a3e635',  // lime 400
+    glowColor: '#84cc16'
   },
   {
     id: 'night',
@@ -137,6 +191,16 @@ export const PIPE_SKINS: PipeSkin[] = [
 
 export const THEMES: ThemeSkin[] = [
   {
+    id: 'random',
+    name: '🎲 Random Theme',
+    cost: 0,
+    unlocked: true,
+    skyColor: 'linear-gradient(135deg, #6366f1, #ec4899)',
+    groundColor: '#1e1b4b',
+    obstacleColor: 'random',
+    description: 'Surprise environment! Randomly chooses from your unlocked themes on each flight.'
+  },
+  {
     id: 'classic',
     name: 'Day Valley',
     cost: 0,
@@ -145,6 +209,16 @@ export const THEMES: ThemeSkin[] = [
     groundColor: '#ddd896',
     obstacleColor: 'classic',
     description: 'Fly over a beautiful, sunny cartoon valley with clouds.'
+  },
+  {
+    id: 'sunset',
+    name: 'Sunset Coast',
+    cost: 100,
+    unlocked: false,
+    skyColor: '#ea580c',
+    groundColor: '#7c2d12',
+    obstacleColor: 'sunset',
+    description: 'Twilight purple-orange dusk with palm trees and ocean reflections.'
   },
   {
     id: 'night',
@@ -157,6 +231,26 @@ export const THEMES: ThemeSkin[] = [
     description: 'A serene nighttime metropolis with glowing golden windows.'
   },
   {
+    id: 'candy',
+    name: 'Candy Wonderland',
+    cost: 180,
+    unlocked: false,
+    skyColor: '#f472b6',
+    groundColor: '#db2777',
+    obstacleColor: 'candy',
+    description: 'Pastel dreamscape of sugary clouds, lollipop trees, and frosting.'
+  },
+  {
+    id: 'matrix',
+    name: 'Digital Matrix',
+    cost: 220,
+    unlocked: false,
+    skyColor: '#020b05',
+    groundColor: '#022c22',
+    obstacleColor: 'matrix',
+    description: 'Monochrome cyberspace terminal with raining green digital code.'
+  },
+  {
     id: 'cyberpunk',
     name: 'Neon Grid',
     cost: 200,
@@ -165,6 +259,16 @@ export const THEMES: ThemeSkin[] = [
     groundColor: '#06060c',
     obstacleColor: 'cyberpunk',
     description: 'An advanced retro-futurist cyberspace lined with neon grids.'
+  },
+  {
+    id: 'inferno',
+    name: 'Molten Peaks',
+    cost: 250,
+    unlocked: false,
+    skyColor: '#1c1917',
+    groundColor: '#18181b',
+    obstacleColor: 'inferno',
+    description: 'Dark volcanic skies over erupting magma mountains and ember fissures.'
   },
   {
     id: 'military',

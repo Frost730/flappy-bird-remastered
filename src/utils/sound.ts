@@ -37,6 +37,30 @@ const BGM_THEMES: { [key: string]: string[] } = {
     'G2', 'G2', 'G3', 'G2', 'D3', 'D3', 'G3', 'G2',
     'C2', 'C2', 'C3', 'C2', 'G2', 'G2', 'C3', 'C2',
     'D2', 'D2', 'A2', 'D2', 'F2', 'F2', 'A2', 'D2'
+  ],
+  sunset: [
+    'F3', 'A3', 'C4', 'E4', 'A3', 'C4', 'E4', 'C4',
+    'G3', 'B3', 'D4', 'G4', 'B3', 'D4', 'G4', 'D4',
+    'E3', 'G3', 'B3', 'E4', 'G3', 'B3', 'E4', 'B3',
+    'A3', 'C4', 'E4', 'A4', 'C4', 'E4', 'A4', 'E4'
+  ],
+  candy: [
+    'C4', 'G4', 'E4', 'C5', 'G4', 'E4', 'C5', 'G4',
+    'F4', 'A4', 'C5', 'F5', 'A4', 'C5', 'F5', 'C5',
+    'G4', 'B4', 'D5', 'G5', 'B4', 'D5', 'G5', 'D5',
+    'C4', 'E4', 'G4', 'C5', 'E4', 'G4', 'C5', 'E4'
+  ],
+  matrix: [
+    'E2', 'E3', 'G2', 'E3', 'Bb2', 'E3', 'A2', 'E3',
+    'D2', 'D3', 'F2', 'D3', 'Ab2', 'D3', 'G2', 'D3',
+    'C2', 'C3', 'Eb2', 'C3', 'Gb2', 'C3', 'F2', 'C3',
+    'B1', 'B2', 'D2', 'B2', 'F2', 'B2', 'E2', 'B2'
+  ],
+  inferno: [
+    'C2', 'C2', 'Eb2', 'C2', 'G2', 'G2', 'Ab2', 'G2',
+    'Bb1', 'Bb1', 'D2', 'Bb1', 'F2', 'F2', 'G2', 'F2',
+    'Ab1', 'Ab1', 'C2', 'Ab1', 'Eb2', 'Eb2', 'F2', 'Eb2',
+    'G1', 'G1', 'B1', 'G1', 'D2', 'D2', 'Eb2', 'D2'
   ]
 };
 
@@ -297,12 +321,12 @@ class SoundManager {
     const gain = this.ctx.createGain();
     
     // Change synth type based on theme
-    if (this.currentTheme === 'cyberpunk') {
+    if (this.currentTheme === 'cyberpunk' || this.currentTheme === 'matrix') {
       osc.type = 'sawtooth';
-    } else if (this.currentTheme === 'military') {
+    } else if (this.currentTheme === 'military' || this.currentTheme === 'inferno') {
       osc.type = 'triangle';
     } else {
-      osc.type = 'sine'; // classic/night
+      osc.type = 'sine'; // classic/night/sunset/candy
     }
     
     osc.frequency.setValueAtTime(freq, time);

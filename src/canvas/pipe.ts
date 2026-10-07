@@ -42,11 +42,10 @@ function drawSinglePipe(
 
   ctx.save();
   
-  // Set up neon glow if Cyberpunk
-  const isCyber = skin.id === 'cyberpunk';
-  if (isCyber && skin.glowColor) {
+  // Set up glow if skin has glowColor
+  if (skin.glowColor) {
     ctx.shadowColor = skin.glowColor;
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = 12;
   }
 
   // 1. DRAW PIPE BODY
@@ -58,7 +57,7 @@ function drawSinglePipe(
   bodyGrad.addColorStop(1, adjustColorBrightness(skin.primaryColor, -40));
 
   ctx.fillStyle = bodyGrad;
-  ctx.strokeStyle = '#1e293b';
+  ctx.strokeStyle = '#0f172a';
   ctx.lineWidth = 2.5;
 
   ctx.beginPath();
@@ -66,9 +65,19 @@ function drawSinglePipe(
   ctx.fill();
   ctx.stroke();
 
-  // Draw military camo details if military
+  // Pattern overlays by skin type
   if (skin.id === 'military') {
     drawMilitaryCamo(ctx, x, bodyY, width, bodyHeight);
+  } else if (skin.id === 'candy') {
+    drawCandyStripes(ctx, x, bodyY, width, bodyHeight);
+  } else if (skin.id === 'lava') {
+    drawLavaVeins(ctx, x, bodyY, width, bodyHeight);
+  } else if (skin.id === 'frost') {
+    drawIceCrystals(ctx, x, bodyY, width, bodyHeight);
+  } else if (skin.id === 'gold') {
+    drawGoldStuds(ctx, x, bodyY, width, bodyHeight);
+  } else if (skin.id === 'toxic') {
+    drawToxicSlime(ctx, x, bodyY, width, bodyHeight);
   }
 
   // 2. DRAW PIPE LIP (CAP)
@@ -85,14 +94,14 @@ function drawSinglePipe(
   ctx.stroke();
 
   // Highlight line running down the pipe (white reflection stripe)
-  if (skin.id === 'classic' || skin.id === 'night') {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+  if (skin.id === 'classic' || skin.id === 'night' || skin.id === 'gold') {
+    ctx.fillStyle = skin.id === 'gold' ? 'rgba(255, 255, 255, 0.45)' : 'rgba(255, 255, 255, 0.25)';
     ctx.fillRect(x + width * 0.25, bodyY, 6, bodyHeight);
     ctx.fillRect(x + width * 0.25 - lipOffset / 2, lipY + 2, 8, lipHeight - 4);
   }
 
-  // Neon glowing trim for Cyberpunk
-  if (isCyber && skin.glowColor) {
+  // Neon glowing trim for Cyberpunk & Night
+  if (skin.glowColor && (skin.id === 'cyberpunk' || skin.id === 'night' || skin.id === 'toxic')) {
     ctx.strokeStyle = skin.glowColor;
     ctx.lineWidth = 2;
     ctx.shadowBlur = 15;
@@ -142,6 +151,111 @@ function drawMilitaryCamo(ctx: CanvasRenderingContext2D, x: number, y: number, w
     ctx.stroke();
   }
 
+  ctx.restore();
+}
+
+// Candy Cane spiral stripes
+function drawCandyStripes(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+  ctx.lineWidth = 14;
+
+  for (let dy = y - w; dy < y + h + w; dy += 36) {
+    ctx.beginPath();
+    ctx.moveTo(x - 10, dy);
+    ctx.lineTo(x + w + 10, dy + w);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Lava fiery fissure veins
+function drawLavaVeins(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+
+  ctx.strokeStyle = '#f97316';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = '#ef4444';
+  ctx.shadowBlur = 8;
+
+  for (let vy = y + 20; vy < y + h; vy += 50) {
+    ctx.beginPath();
+    ctx.moveTo(x + 10, vy);
+    ctx.lineTo(x + w * 0.4, vy + 12);
+    ctx.lineTo(x + w * 0.7, vy - 8);
+    ctx.lineTo(x + w - 10, vy + 10);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Glacial ice crystal facets
+function drawIceCrystals(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+  ctx.strokeStyle = 'rgba(186, 230, 253, 0.5)';
+  ctx.lineWidth = 1.5;
+
+  for (let cy = y + 25; cy < y + h; cy += 60) {
+    ctx.beginPath();
+    ctx.moveTo(x + w * 0.5, cy - 18);
+    ctx.lineTo(x + w * 0.75, cy);
+    ctx.lineTo(x + w * 0.5, cy + 18);
+    ctx.lineTo(x + w * 0.25, cy);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Midas gold royal gem studs and specular sheen
+function drawGoldStuds(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+
+  // Sparkling diamond studs
+  ctx.fillStyle = '#fef08a';
+  ctx.strokeStyle = '#b45309';
+  ctx.lineWidth = 1;
+
+  for (let gy = y + 20; gy < y + h; gy += 45) {
+    ctx.beginPath();
+    ctx.arc(x + 12, gy, 3, 0, Math.PI * 2);
+    ctx.arc(x + w - 12, gy, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Biohazard toxic sludge drops
+function drawToxicSlime(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+
+  ctx.fillStyle = 'rgba(163, 230, 53, 0.4)';
+  for (let ty = y + 30; ty < y + h; ty += 55) {
+    ctx.beginPath();
+    ctx.arc(x + w * 0.3, ty, 6, 0, Math.PI * 2);
+    ctx.arc(x + w * 0.7, ty + 15, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.restore();
 }
 

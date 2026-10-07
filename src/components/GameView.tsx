@@ -24,6 +24,8 @@ interface GameViewProps {
   difficulty?: DifficultyMode;
   onDifficultyChange?: (difficulty: DifficultyMode) => void;
   unlockedBirds?: string[];
+  unlockedPipes?: string[];
+  unlockedThemes?: string[];
   currentHighScore: number;
   isLeaderboardWorthy: (score: number) => boolean;
   onSaveLeaderboard: (name: string, score: number, difficultyTier?: DifficultyTier, difficultyMode?: DifficultyMode) => void;
@@ -55,6 +57,8 @@ export const GameView: React.FC<GameViewProps> = ({
   difficulty = 'dynamic',
   onDifficultyChange,
   unlockedBirds,
+  unlockedPipes,
+  unlockedThemes,
   currentHighScore,
   isLeaderboardWorthy,
   onSaveLeaderboard,
@@ -73,9 +77,11 @@ export const GameView: React.FC<GameViewProps> = ({
   const [showLeaderboardInput, setShowLeaderboardInput] = useState(false);
   const [playerName, setPlayerName] = useState('');
 
-  // Resolve bird skin for the run (supports random skin rolls on each play)
+  // Fallbacks
   const defaultBird = BIRD_SKINS.find((b) => b.id === 'classic') || BIRD_SKINS[0];
+  const defaultPipe = PIPE_SKINS.find((p) => p.id === 'classic') || PIPE_SKINS[0];
 
+  // Resolve bird skin for the run (supports random skin rolls on each play)
   const pickSkin = () => {
     if (birdSkinId === 'random') {
       const candidates = (unlockedBirds || ['classic']).filter((id) => id !== 'random');
@@ -87,10 +93,39 @@ export const GameView: React.FC<GameViewProps> = ({
     return BIRD_SKINS.find((b) => b.id === birdSkinId) || defaultBird;
   };
 
+  // Resolve pipe skin for the run (supports random pipe rolls on each play)
+  const pickPipe = () => {
+    if (pipeSkinId === 'random') {
+      const candidates = (unlockedPipes || ['classic']).filter((id) => id !== 'random');
+      const chosenId = candidates.length > 0
+        ? candidates[Math.floor(Math.random() * candidates.length)]
+        : 'classic';
+      return PIPE_SKINS.find((p) => p.id === chosenId) || defaultPipe;
+    }
+    return PIPE_SKINS.find((p) => p.id === pipeSkinId) || defaultPipe;
+  };
+
+  // Resolve theme for the run (supports random theme rolls on each play)
+  const pickTheme = () => {
+    if (themeId === 'random') {
+      const candidates = (unlockedThemes || ['classic']).filter((id) => id !== 'random');
+      return candidates.length > 0
+        ? candidates[Math.floor(Math.random() * candidates.length)]
+        : 'classic';
+    }
+    return themeId;
+  };
+
+  const initialSkin = birdSkinId === 'random' ? defaultBird : (BIRD_SKINS.find((b) => b.id === birdSkinId) || defaultBird);
+  const initialPipe = pipeSkinId === 'random' ? defaultPipe : (PIPE_SKINS.find((p) => p.id === pipeSkinId) || defaultPipe);
+  const initialTheme = themeId === 'random' ? 'classic' : themeId;
+
   // References for mutable game loop state (avoids closure stale references)
   const stateRef = useRef({
     gameState: 'MENU' as GameState,
-    activeSkin: BIRD_SKINS.find((b) => b.id === (birdSkinId === 'random' ? 'classic' : birdSkinId)) || defaultBird,
+    activeSkin: initialSkin,
+    activePipe: initialPipe,
+    activeTheme: initialTheme,
     birdY: 250,
     birdVelocity: 0,
     birdFlapTick: 0,
@@ -105,12 +140,12 @@ export const GameView: React.FC<GameViewProps> = ({
     activeAchievementsThisRun: [] as string[]
   });
 
-  const pipeSkin = PIPE_SKINS.find((p) => p.id === pipeSkinId) || PIPE_SKINS[0];
-
   // Helper: Reset game variables
   const resetGame = () => {
     const initialDiff = getDifficultyConfig(0, difficulty);
     stateRef.current.activeSkin = pickSkin();
+    stateRef.current.activePipe = pickPipe();
+    stateRef.current.activeTheme = pickTheme();
     stateRef.current.birdY = 250;
     stateRef.current.birdVelocity = 0;
     stateRef.current.birdFlapTick = 0;
@@ -141,11 +176,13 @@ export const GameView: React.FC<GameViewProps> = ({
     
     if (current.gameState === 'MENU') {
       current.activeSkin = pickSkin();
+      current.activePipe = pickPipe();
+      current.activeTheme = pickTheme();
       current.gameState = 'PLAYING';
       setGameState('PLAYING');
       sound.playFlap();
       // start looping BGM
-      sound.startBGM(themeId);
+      sound.startBGM(current.activeTheme);
       
       // Apply initial jump on start so the bird rises immediately
       current.birdVelocity = -3.3;
@@ -192,7 +229,7 @@ export const GameView: React.FC<GameViewProps> = ({
     } else if (current.gameState === 'PAUSED') {
       current.gameState = 'PLAYING';
       setGameState('PLAYING');
-      sound.startBGM(themeId);
+      sound.startBGM(current.activeTheme);
     }
   };
 
@@ -234,7 +271,7 @@ export const GameView: React.FC<GameViewProps> = ({
       const current = stateRef.current;
 
       // Draw background parallax
-      drawBackground(ctx, V_WIDTH, V_HEIGHT, current.scrollX, themeId);
+      drawBackground(ctx, V_WIDTH, V_HEIGHT, current.scrollX, current.activeTheme);
 
       // Handle game state updates
       if (current.gameState === 'PLAYING') {
@@ -346,7 +383,7 @@ export const GameView: React.FC<GameViewProps> = ({
                 sound.playCoin();
 
                 // Spawn sparkles
-                const sparkles = createCoinParticles(nextPipe.coinX, nextPipe.coinY, themeId);
+                const sparkles = createCoinParticles(nextPipe.coinX, nextPipe.coinY, current.activeTheme);
                 current.particles.push(...sparkles);
               }
             }
@@ -366,11 +403,11 @@ export const GameView: React.FC<GameViewProps> = ({
 
       // Draw Pipes
       current.pipes.forEach((p) => {
-        drawPipes(ctx, p.x, p.top, p.bottom, p.width, V_HEIGHT, pipeSkin);
+        drawPipes(ctx, p.x, p.top, p.bottom, p.width, V_HEIGHT, current.activePipe);
         
         // Draw Coin
         if (p.hasCoin && !p.coinCollected) {
-          drawCoin(ctx, p.coinX, p.coinY, current.birdFlapTick, themeId);
+          drawCoin(ctx, p.coinX, p.coinY, current.birdFlapTick, current.activeTheme);
         }
       });
 
@@ -382,7 +419,7 @@ export const GameView: React.FC<GameViewProps> = ({
       drawBird(ctx, 100, current.birdY, current.birdVelocity, current.birdFlapTick, current.activeSkin);
 
       // Draw Ground (Parallax 1.0 - absolute sync)
-      drawGround(ctx, V_WIDTH, V_HEIGHT, current.scrollX, themeId);
+      drawGround(ctx, V_WIDTH, V_HEIGHT, current.scrollX, current.activeTheme);
 
       // Recursive loop
       animationId = requestAnimationFrame(gameLoop);
