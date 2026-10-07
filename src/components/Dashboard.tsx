@@ -151,6 +151,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => setActiveTab(item.id as TabType)}
                 className={`flex items-center justify-between px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 group ${
                   isActive
@@ -224,6 +225,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <span className="truncate">{activeBird.name}</span>
                   </div>
                   <button
+                    type="button"
                     onClick={randomizeBird}
                     title="Roll a random unlocked bird"
                     className="bg-slate-950/75 hover:bg-slate-900 border border-slate-700/60 p-1.5 rounded-full text-amber-400 hover:text-amber-300 shadow-sm transition-transform active:scale-90"
@@ -277,6 +279,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
               {/* Start Flight button */}
               <button
+                type="button"
                 onClick={onStartGame}
                 className="w-full py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-black text-lg tracking-wider rounded-2xl shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 active:scale-98 transition-all flex items-center justify-center gap-3 animate-pulse-glow"
               >
@@ -302,6 +305,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
               <div className="flex flex-col sm:items-end gap-1.5">
                 <button
+                  type="button"
                   onClick={handleRerollMissions}
                   disabled={rerollsLeft <= 0 || coins < DAILY_REROLL_COST}
                   title={rerollsLeft <= 0 ? "Daily reroll limit reached" : `Reroll missions for ${DAILY_REROLL_COST} coins`}
@@ -443,6 +447,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           return (
             <button
               key={item.id}
+              type="button"
               onClick={() => setActiveTab(item.id as TabType)}
               className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl shrink-0 text-center transition-all min-w-[64px] ${
                 isActive ? 'text-violet-400 font-bold bg-slate-900/40' : 'text-slate-500 hover:text-slate-300'

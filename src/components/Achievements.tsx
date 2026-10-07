@@ -90,6 +90,7 @@ export const Achievements: React.FC<AchievementsProps> = ({ achievements }) => {
         {(['all', 'milestone', 'skill', 'collection', 'secret'] as FilterCategory[]).map((cat) => (
           <button
             key={cat}
+            type="button"
             onClick={() => setActiveFilter(cat)}
             className={`px-3.5 py-1.5 rounded-lg font-semibold text-xs transition-all duration-200 capitalize ${
               activeFilter === cat

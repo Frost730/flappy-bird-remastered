@@ -142,6 +142,7 @@ export const Settings: React.FC<SettingsProps> = ({ settings, setSettings, onRes
               return (
                 <button
                   key={d.id}
+                  type="button"
                   onClick={() => {
                     setSettings({ ...settings, difficulty: d.id as DifficultyMode });
                     sound.playCoin();
@@ -182,6 +183,7 @@ export const Settings: React.FC<SettingsProps> = ({ settings, setSettings, onRes
 
           {!showConfirm ? (
             <button
+              type="button"
               onClick={() => setShowConfirm(true)}
               className="bg-red-500/10 border border-red-500/35 hover:bg-red-600 hover:text-white text-red-400 font-bold py-2.5 px-5 rounded-xl transition-all text-sm flex items-center gap-2"
             >
@@ -198,12 +200,14 @@ export const Settings: React.FC<SettingsProps> = ({ settings, setSettings, onRes
               </div>
               <div className="flex gap-3 text-sm">
                 <button
+                  type="button"
                   onClick={executeReset}
                   className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
                 >
                   Yes, Reset Everything
                 </button>
                 <button
+                  type="button"
                   onClick={() => setShowConfirm(false)}
                   className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 px-4 rounded-lg transition-colors"
                 >

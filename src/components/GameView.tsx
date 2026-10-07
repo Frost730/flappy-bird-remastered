@@ -165,7 +165,11 @@ export const GameView: React.FC<GameViewProps> = ({
   // Keyboard binding
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Space') {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
         e.preventDefault();
         handleJump();
       }
@@ -431,11 +435,21 @@ export const GameView: React.FC<GameViewProps> = ({
     <div
       ref={containerRef}
       className="flex flex-col items-center justify-center h-full w-full relative"
-      onClick={() => handleJump()}
-      onTouchStart={(e) => handleJump(e)}
     >
       {/* Canvas container with aspect ratio fit */}
-      <div className="w-full max-w-[420px] aspect-[480/640] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-slate-800 overflow-hidden relative mx-auto select-none touch-none">
+      <div
+        className="w-full max-w-[420px] aspect-[480/640] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-slate-800 overflow-hidden relative mx-auto select-none touch-none"
+        onClick={(e) => {
+          if (gameState === 'PLAYING') {
+            handleJump(e);
+          }
+        }}
+        onTouchStart={(e) => {
+          if (gameState === 'PLAYING') {
+            handleJump(e);
+          }
+        }}
+      >
         
         {/* Game Canvas */}
         <canvas
@@ -476,7 +490,9 @@ export const GameView: React.FC<GameViewProps> = ({
 
               {/* Pause button */}
               <button
+                type="button"
                 onClick={togglePause}
+                onTouchStart={(e) => e.stopPropagation()}
                 className="pointer-events-auto bg-slate-900/60 hover:bg-slate-800/80 border border-slate-700/50 text-white p-2 rounded-xl backdrop-blur-sm transition-all focus:outline-none"
               >
                 <Pause className="w-4 h-4" />
@@ -503,15 +519,19 @@ export const GameView: React.FC<GameViewProps> = ({
 
         {/* Overlay 2: MAIN MENU / START SCREEN */}
         {gameState === 'MENU' && (
-          <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center select-none cursor-pointer">
-            <div className="animate-float flex flex-col items-center">
+          <div
+            className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center select-none cursor-pointer"
+            onClick={(e) => handleJump(e)}
+            onTouchStart={(e) => handleJump(e)}
+          >
+            <div className="animate-float flex flex-col items-center pointer-events-none">
               <Award className="w-12 h-12 text-yellow-400 mb-2 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]" />
               <h2 className="text-2xl font-black text-white uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                 Ready to Fly?
               </h2>
             </div>
             
-            <p className="text-white/80 font-semibold text-sm mt-4 px-6 py-2 bg-slate-900/80 border border-slate-700/40 rounded-full animate-pulse backdrop-blur-md">
+            <p className="text-white/80 font-semibold text-sm mt-4 px-6 py-2 bg-slate-900/80 border border-slate-700/40 rounded-full animate-pulse backdrop-blur-md pointer-events-none">
               Tap / Click or Space to Start
             </p>
 
@@ -519,6 +539,7 @@ export const GameView: React.FC<GameViewProps> = ({
             <div
               className="mt-6 pointer-events-auto bg-slate-900/90 border border-slate-700/70 p-1 rounded-2xl backdrop-blur-md shadow-lg flex items-center gap-1 z-10"
               onClick={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
             >
               {[
                 { id: 'dynamic', label: 'Dynamic', emoji: '🚀' },
@@ -530,9 +551,14 @@ export const GameView: React.FC<GameViewProps> = ({
                 return (
                   <button
                     key={m.id}
-                    onClick={() => {
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onDifficultyChange?.(m.id as DifficultyMode);
                       sound.playCoin();
+                    }}
+                    onTouchStart={(e) => {
+                      e.stopPropagation();
                     }}
                     className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all flex items-center gap-1 ${
                       active
@@ -547,7 +573,7 @@ export const GameView: React.FC<GameViewProps> = ({
               })}
             </div>
 
-            <div className="absolute bottom-6 text-slate-300/80 text-xs font-semibold bg-slate-900/50 backdrop-blur-sm py-1.5 px-3 rounded-full border border-slate-800/60 flex items-center gap-1.5">
+            <div className="absolute bottom-6 text-slate-300/80 text-xs font-semibold bg-slate-900/50 backdrop-blur-sm py-1.5 px-3 rounded-full border border-slate-800/60 flex items-center gap-1.5 pointer-events-none">
               <span>High Score:</span>
               <span className="font-extrabold text-yellow-400">{currentHighScore}</span>
             </div>
@@ -556,23 +582,30 @@ export const GameView: React.FC<GameViewProps> = ({
 
         {/* Overlay 3: PAUSE MENU */}
         {gameState === 'PAUSED' && (
-          <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center select-none">
+          <div
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center select-none z-30"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
             <h2 className="text-3xl font-black text-white uppercase tracking-wider mb-6">Game Paused</h2>
 
             <div className="flex flex-col gap-3 w-48">
               <button
+                type="button"
                 onClick={() => togglePause()}
                 className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-extrabold py-3 px-4 rounded-xl shadow-lg shadow-violet-500/20 transition-all flex items-center justify-center gap-2 text-sm"
               >
                 <Play className="w-4 h-4 fill-white" /> Resume
               </button>
               <button
+                type="button"
                 onClick={handleRestart}
                 className="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm border border-slate-700/50"
               >
                 <RotateCcw className="w-4 h-4" /> Restart
               </button>
               <button
+                type="button"
                 onClick={quitToDashboard}
                 className="bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold py-2 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs border border-slate-800/80 mt-2"
               >
@@ -584,11 +617,21 @@ export const GameView: React.FC<GameViewProps> = ({
 
         {/* Overlay 4: GAME OVER */}
         {gameState === 'GAMEOVER' && (
-          <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 select-none">
+          <div
+            className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 select-none z-30"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
             
             {showLeaderboardInput ? (
               /* Leaderboard Submission Screen */
-              <form onSubmit={handleLeaderboardSubmit} className="glass-panel p-5 rounded-2xl border border-slate-800 w-full max-w-[280px] text-center space-y-4 animate-pulse-glow" onClick={(e) => e.stopPropagation()}>
+              <form
+                onSubmit={handleLeaderboardSubmit}
+                action="#"
+                className="glass-panel p-5 rounded-2xl border border-slate-800 w-full max-w-[280px] text-center space-y-4 animate-pulse-glow"
+                onClick={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+              >
                 <Award className="w-10 h-10 text-yellow-400 mx-auto animate-bounce" />
                 <h3 className="text-white font-extrabold text-lg uppercase tracking-wider">New Record!</h3>
                 <p className="text-slate-400 text-xs leading-relaxed">
@@ -613,7 +656,11 @@ export const GameView: React.FC<GameViewProps> = ({
               </form>
             ) : (
               /* Normal Game Over report */
-              <div className="flex flex-col items-center w-full max-w-[280px]" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="flex flex-col items-center w-full max-w-[280px]"
+                onClick={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+              >
                 <div className="text-red-500 font-black text-3xl uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] mb-4">
                   Game Over
                 </div>
@@ -644,12 +691,14 @@ export const GameView: React.FC<GameViewProps> = ({
 
                 <div className="flex flex-col gap-2.5 w-full mt-6">
                   <button
+                    type="button"
                     onClick={handleRestart}
                     className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-extrabold py-3 px-4 rounded-xl shadow-lg shadow-violet-500/20 transition-all flex items-center justify-center gap-2 text-sm"
                   >
                     <RotateCcw className="w-4 h-4" /> Play Again
                   </button>
                   <button
+                    type="button"
                     onClick={quitToDashboard}
                     className="bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold py-2 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs border border-slate-800/80"
                   >

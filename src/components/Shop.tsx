@@ -94,6 +94,7 @@ export const Shop: React.FC<ShopProps> = ({
         {/* Balance & Quick Randomizer */}
         <div className="flex items-center gap-2.5">
           <button
+            type="button"
             onClick={randomizeBird}
             title="Randomize currently equipped bird skin"
             className="flex items-center gap-1.5 bg-violet-600/20 hover:bg-violet-600/30 border border-violet-500/40 text-violet-300 px-3.5 py-2 rounded-full font-bold text-xs transition-colors shadow-sm"
@@ -114,6 +115,7 @@ export const Shop: React.FC<ShopProps> = ({
         {(['birds', 'pipes', 'themes'] as ShopTab[]).map((tab) => (
           <button
             key={tab}
+            type="button"
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 capitalize flex-1 sm:flex-none ${
               activeTab === tab
@@ -166,11 +168,12 @@ export const Shop: React.FC<ShopProps> = ({
 
                 <div className="mt-6">
                   {isActive ? (
-                    <button className="w-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-1 cursor-default text-sm">
+                    <button type="button" className="w-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-1 cursor-default text-sm">
                       <Check className="w-4 h-4" /> Equipped
                     </button>
                   ) : isUnlocked ? (
                     <button
+                      type="button"
                       onClick={() => equipItem('birds', bird.id)}
                       className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-xl transition-colors text-sm"
                     >
@@ -178,6 +181,7 @@ export const Shop: React.FC<ShopProps> = ({
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={() => buyItem('birds', bird.id, bird.cost)}
                       className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-1.5 text-sm"
                     >
@@ -230,11 +234,12 @@ export const Shop: React.FC<ShopProps> = ({
 
                 <div className="mt-6">
                   {isActive ? (
-                    <button className="w-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-1 cursor-default text-sm">
+                    <button type="button" className="w-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-1 cursor-default text-sm">
                       <Check className="w-4 h-4" /> Equipped
                     </button>
                   ) : isUnlocked ? (
                     <button
+                      type="button"
                       onClick={() => equipItem('pipes', pipe.id)}
                       className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-xl transition-colors text-sm"
                     >
@@ -242,6 +247,7 @@ export const Shop: React.FC<ShopProps> = ({
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={() => buyItem('pipes', pipe.id, pipe.cost)}
                       className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-1.5 text-sm"
                     >
@@ -310,11 +316,12 @@ export const Shop: React.FC<ShopProps> = ({
 
                 <div className="mt-6">
                   {isActive ? (
-                    <button className="w-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-1 cursor-default text-sm">
+                    <button type="button" className="w-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-1 cursor-default text-sm">
                       <Check className="w-4 h-4" /> Active
                     </button>
                   ) : isUnlocked ? (
                     <button
+                      type="button"
                       onClick={() => equipItem('themes', theme.id)}
                       className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-xl transition-colors text-sm"
                     >
@@ -322,6 +329,7 @@ export const Shop: React.FC<ShopProps> = ({
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={() => buyItem('themes', theme.id, theme.cost)}
                       className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-1.5 text-sm"
                     >

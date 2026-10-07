@@ -319,6 +319,7 @@ function App() {
             <div className="text-white font-extrabold text-sm truncate mt-0.5">{activeToast}</div>
           </div>
           <button
+            type="button"
             onClick={() => setActiveToast(null)}
             className="text-slate-500 hover:text-slate-300 transition-colors p-1"
           >
