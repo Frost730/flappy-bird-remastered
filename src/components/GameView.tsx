@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GameState } from '../types/game';
+import { GameState, DifficultyMode } from '../types/game';
 import { sound } from '../utils/sound';
 import { drawBackground, drawGround } from '../canvas/background';
 import { drawBird } from '../canvas/bird';
@@ -15,11 +15,14 @@ import {
 } from '../canvas/particles';
 import { BIRD_SKINS, PIPE_SKINS } from '../utils/constants';
 import { Pause, Play, RotateCcw, Home, Award } from 'lucide-react';
+import { getDifficultyConfig, type DifficultyTier } from '../utils/difficulty';
 
 interface GameViewProps {
   themeId: string;
   birdSkinId: string;
   pipeSkinId: string;
+  difficulty?: DifficultyMode;
+  onDifficultyChange?: (difficulty: DifficultyMode) => void;
   unlockedBirds?: string[];
   currentHighScore: number;
   isLeaderboardWorthy: (score: number) => boolean;
@@ -49,6 +52,8 @@ export const GameView: React.FC<GameViewProps> = ({
   themeId,
   birdSkinId,
   pipeSkinId,
+  difficulty = 'dynamic',
+  onDifficultyChange,
   unlockedBirds,
   currentHighScore,
   isLeaderboardWorthy,
@@ -63,6 +68,8 @@ export const GameView: React.FC<GameViewProps> = ({
   const [gameState, setGameState] = useState<GameState>('MENU');
   const [score, setScore] = useState(0);
   const [runCoins, setRunCoins] = useState(0);
+  const [currentTier, setCurrentTier] = useState<DifficultyTier>(getDifficultyConfig(0, difficulty).tier);
+  const [tierToast, setTierToast] = useState<{ label: string; emoji: string } | null>(null);
   const [showLeaderboardInput, setShowLeaderboardInput] = useState(false);
   const [playerName, setPlayerName] = useState('');
 
@@ -92,6 +99,7 @@ export const GameView: React.FC<GameViewProps> = ({
     coinsCollected: 0,
     lastFrameTime: 0,
     totalFlightSeconds: 0,
+    lastTier: getDifficultyConfig(0, difficulty).tier as DifficultyTier,
     activeAchievementsThisRun: [] as string[]
   });
 
@@ -99,6 +107,7 @@ export const GameView: React.FC<GameViewProps> = ({
 
   // Helper: Reset game variables
   const resetGame = () => {
+    const initialDiff = getDifficultyConfig(0, difficulty);
     stateRef.current.activeSkin = pickSkin();
     stateRef.current.birdY = 250;
     stateRef.current.birdVelocity = 0;
@@ -109,7 +118,10 @@ export const GameView: React.FC<GameViewProps> = ({
     stateRef.current.score = 0;
     stateRef.current.coinsCollected = 0;
     stateRef.current.totalFlightSeconds = 0;
+    stateRef.current.lastTier = initialDiff.tier;
     
+    setCurrentTier(initialDiff.tier);
+    setTierToast(null);
     setScore(0);
     setRunCoins(0);
     setShowLeaderboardInput(false);
@@ -220,11 +232,21 @@ export const GameView: React.FC<GameViewProps> = ({
 
       // Handle game state updates
       if (current.gameState === 'PLAYING') {
-        // Scroll speed increases with score (difficulty scaling)
-        const currentSpeed = 1.6 + Math.min(2.0, current.score * 0.04);
-        current.scrollX += currentSpeed;
+        const diff = getDifficultyConfig(current.score, difficulty);
 
-        // Apply gravity to bird
+        // Check for tier change in dynamic mode
+        if (diff.tier !== current.lastTier) {
+          current.lastTier = diff.tier;
+          setCurrentTier(diff.tier);
+          setTierToast({ label: diff.tierLabel, emoji: diff.tierEmoji });
+          sound.playPoint();
+          setTimeout(() => setTierToast(null), 2200);
+        }
+
+        // Scroll speed increases with calibrated difficulty curve
+        current.scrollX += diff.speed;
+
+        // Apply gravity to bird (classic floaty physics preserved!)
         current.birdVelocity += 0.11; // gravity force
         current.birdY += current.birdVelocity;
         current.birdFlapTick += 1;
@@ -236,19 +258,33 @@ export const GameView: React.FC<GameViewProps> = ({
         }
 
         // Spawn / Scroll pipes
-        // Dynamic pipe gap size and horizontal spacing (difficulty scaling)
-        const gapSize = Math.max(125, 200 - Math.min(75, current.score * 0.8));
-        const pipeSpacing = Math.max(200, 300 - Math.min(100, current.score * 1.5));
-
         if (
           current.pipes.length === 0 ||
-          current.pipes[current.pipes.length - 1].x < V_WIDTH - pipeSpacing
+          current.pipes[current.pipes.length - 1].x < V_WIDTH - diff.pipeSpacing
         ) {
           const pipeWidth = 72;
-          const minPipeH = 50;
-          const maxPipeH = GROUND_Y - gapSize - minPipeH;
-          const topH = minPipeH + Math.random() * (maxPipeH - minPipeH);
-          const hasCoin = Math.random() < 0.65; // 65% spawn rate for coins
+          const gapSize = diff.gapSize;
+          const minPipeH = 55;
+          const maxPipeH = GROUND_Y - gapSize - 55;
+
+          let topH: number;
+          if (current.pipes.length === 0) {
+            // First pipe centered with slight safe offset
+            topH = (minPipeH + maxPipeH) / 2 + (Math.random() - 0.5) * 60;
+          } else {
+            // Constrain vertical difference by maxDeltaY:
+            // Prevents impossible pipe walls while keeping high scores exciting!
+            const prevTop = current.pipes[current.pipes.length - 1].top;
+            const delta = (Math.random() * 2 - 1) * diff.maxDeltaY;
+            topH = prevTop + delta;
+          }
+
+          // Bound within safe ceiling and floor clearances
+          topH = Math.max(minPipeH, Math.min(maxPipeH, topH));
+
+          // Coin spawn chance scales gracefully with difficulty
+          const coinProb = diff.tier === 'easy' ? 0.72 : diff.tier === 'medium' ? 0.60 : 0.48;
+          const hasCoin = Math.random() < coinProb;
 
           current.pipes.push({
             x: V_WIDTH,
@@ -267,22 +303,22 @@ export const GameView: React.FC<GameViewProps> = ({
         current.pipes = current.pipes
           .map((pipe) => {
             const nextPipe = { ...pipe };
-            nextPipe.x -= currentSpeed;
-            nextPipe.coinX -= currentSpeed;
+            nextPipe.x -= diff.speed;
+            nextPipe.coinX -= diff.speed;
 
             // Collision Check (Circle vs Rectangle collision)
-            const birdRadius = 12; // forgiving bounding circle
+            const birdRadius = 11.5; // forgiving bounding circle
             
-            // Check top pipe collision
+            // Check top pipe collision (fair 2px horizontal leeway)
             const collideTop = circleRectCollide(
               100, current.birdY, birdRadius,
-              nextPipe.x, 0, nextPipe.width, nextPipe.top
+              nextPipe.x + 2, 0, nextPipe.width - 4, nextPipe.top
             );
 
             // Check bottom pipe collision
             const collideBottom = circleRectCollide(
               100, current.birdY, birdRadius,
-              nextPipe.x, nextPipe.bottom, nextPipe.width, V_HEIGHT - GROUND_Y - nextPipe.bottom
+              nextPipe.x + 2, nextPipe.bottom, nextPipe.width - 4, V_HEIGHT - GROUND_Y - nextPipe.bottom
             );
 
             // Check ground collision
@@ -390,7 +426,7 @@ export const GameView: React.FC<GameViewProps> = ({
       clearInterval(flightTimeInterval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [themeId, birdSkinId, pipeSkinId]);
+  }, [themeId, birdSkinId, pipeSkinId, difficulty]);
 
   return (
     <div
@@ -412,25 +448,57 @@ export const GameView: React.FC<GameViewProps> = ({
 
         {/* Overlay 1: Live Score & Pause button (HUD) */}
         {gameState === 'PLAYING' && (
-          <div className="absolute inset-x-0 top-0 p-4 flex justify-between items-center pointer-events-none">
-            {/* Score */}
-            <div className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-black text-4xl select-none">
-              {score}
+          <div className="absolute inset-x-0 top-0 p-4 flex justify-between items-center pointer-events-none z-20">
+            {/* Score & Difficulty Tier */}
+            <div className="flex items-center gap-2.5">
+              <div className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-black text-4xl select-none">
+                {score}
+              </div>
+              <div
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-md border ${
+                  currentTier === 'easy'
+                    ? 'bg-emerald-500/25 text-emerald-300 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+                    : currentTier === 'medium'
+                    ? 'bg-amber-500/25 text-amber-300 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
+                    : 'bg-rose-500/25 text-rose-300 border-rose-500/40 shadow-[0_0_10px_rgba(244,63,94,0.3)] animate-pulse'
+                }`}
+              >
+                <span>{currentTier === 'easy' ? '🌱' : currentTier === 'medium' ? '⚡' : '🔥'}</span>
+                <span>{currentTier.toUpperCase()}</span>
+              </div>
             </div>
 
-            {/* Coins */}
-            <div className="flex items-center gap-1.5 bg-slate-900/60 border border-slate-700/50 backdrop-blur-sm py-1 px-3 rounded-full text-amber-300 font-extrabold text-sm select-none">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-              {runCoins}
-            </div>
+            {/* Coins & Pause */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 bg-slate-900/60 border border-slate-700/50 backdrop-blur-sm py-1 px-3 rounded-full text-amber-300 font-extrabold text-sm select-none">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                {runCoins}
+              </div>
 
-            {/* Pause button */}
-            <button
-              onClick={togglePause}
-              className="pointer-events-auto bg-slate-900/60 hover:bg-slate-800/80 border border-slate-700/50 text-white p-2 rounded-xl backdrop-blur-sm transition-all focus:outline-none"
-            >
-              <Pause className="w-4 h-4" />
-            </button>
+              {/* Pause button */}
+              <button
+                onClick={togglePause}
+                className="pointer-events-auto bg-slate-900/60 hover:bg-slate-800/80 border border-slate-700/50 text-white p-2 rounded-xl backdrop-blur-sm transition-all focus:outline-none"
+              >
+                <Pause className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Tier Up Notification Banner */}
+        {tierToast && (
+          <div className="absolute top-20 inset-x-0 flex justify-center pointer-events-none z-30 animate-bounce">
+            <div className={`px-4 py-2 rounded-2xl backdrop-blur-md border shadow-2xl flex items-center gap-2 ${
+              tierToast.label === 'Medium'
+                ? 'bg-amber-950/85 border-amber-500/60 text-amber-200'
+                : 'bg-rose-950/85 border-rose-500/60 text-rose-200'
+            }`}>
+              <span className="text-xl">{tierToast.emoji}</span>
+              <span className="text-xs font-black uppercase tracking-widest">
+                Difficulty: {tierToast.label} Mode!
+              </span>
+            </div>
           </div>
         )}
 
@@ -447,6 +515,38 @@ export const GameView: React.FC<GameViewProps> = ({
             <p className="text-white/80 font-semibold text-sm mt-4 px-6 py-2 bg-slate-900/80 border border-slate-700/40 rounded-full animate-pulse backdrop-blur-md">
               Tap / Click or Space to Start
             </p>
+
+            {/* Quick Difficulty Switcher on Start Screen */}
+            <div
+              className="mt-6 pointer-events-auto bg-slate-900/90 border border-slate-700/70 p-1 rounded-2xl backdrop-blur-md shadow-lg flex items-center gap-1 z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {[
+                { id: 'dynamic', label: 'Dynamic', emoji: '🚀' },
+                { id: 'easy', label: 'Easy', emoji: '🌱' },
+                { id: 'medium', label: 'Medium', emoji: '⚡' },
+                { id: 'hard', label: 'Hard', emoji: '🔥' },
+              ].map((m) => {
+                const active = difficulty === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => {
+                      onDifficultyChange?.(m.id as DifficultyMode);
+                      sound.playCoin();
+                    }}
+                    className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all flex items-center gap-1 ${
+                      active
+                        ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <span>{m.emoji}</span>
+                    <span>{m.label}</span>
+                  </button>
+                );
+              })}
+            </div>
 
             <div className="absolute bottom-6 text-slate-300/80 text-xs font-semibold bg-slate-900/50 backdrop-blur-sm py-1.5 px-3 rounded-full border border-slate-800/60 flex items-center gap-1.5">
               <span>High Score:</span>
@@ -521,6 +621,12 @@ export const GameView: React.FC<GameViewProps> = ({
                   <div className="flex justify-between items-center text-xs border-b border-slate-800 pb-2">
                     <span className="text-slate-400">Score</span>
                     <span className="text-white font-black text-lg">{score}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs border-b border-slate-800 pb-2">
+                    <span className="text-slate-400">Difficulty Tier</span>
+                    <span className="font-extrabold flex items-center gap-1 text-slate-200">
+                      <span>{currentTier === 'easy' ? '🌱 Easy' : currentTier === 'medium' ? '⚡ Medium' : '🔥 Hard'}</span>
+                    </span>
                   </div>
                   <div className="flex justify-between items-center text-xs border-b border-slate-800 pb-2">
                     <span className="text-slate-400">High Score</span>

@@ -477,5 +477,17 @@ export const INITIAL_ACHIEVEMENTS: Achievement[] = [
     category: 'secret',
     isSecret: true,
     reward: 120
+  },
+  {
+    id: 'reach_hard',
+    title: 'Adrenaline Ace',
+    description: 'Advance to Hard difficulty (Score 25+) in Dynamic mode.',
+    progress: 0,
+    target: 25,
+    unlocked: false,
+    rarity: 'gold',
+    icon: 'flame',
+    category: 'skill',
+    reward: 100
   }
 ];

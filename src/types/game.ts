@@ -76,10 +76,13 @@ export interface LeaderboardEntry {
   date: string;
 }
 
+export type DifficultyMode = 'dynamic' | 'easy' | 'medium' | 'hard';
+
 export interface GameSettings {
   bgmVolume: number;
   sfxVolume: number;
   currentTheme: string;
   currentBird: string;
   currentPipe: string;
+  difficulty: DifficultyMode;
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { GameSettings, PlayerStats, LeaderboardEntry, Achievement, DailyChallenge } from '../types/game';
+import type { GameSettings, PlayerStats, LeaderboardEntry, Achievement, DailyChallenge, DifficultyMode } from '../types/game';
 import { Shop } from './Shop';
 import { Leaderboard } from './Leaderboard';
 import { Statistics } from './Statistics';
@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   CheckCircle,
   Circle,
-  Dices
+  Dices,
+  Gauge
 } from 'lucide-react';
 import { BIRD_SKINS } from '../utils/constants';
 import { BirdSvg } from './BirdSvg';
@@ -229,6 +230,48 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   >
                     <Dices className="w-4 h-4" />
                   </button>
+                </div>
+              </div>
+
+              {/* Difficulty Quick Selector */}
+              <div className="w-full mb-4 bg-slate-900/80 border border-slate-800 rounded-2xl p-2.5 flex flex-col gap-1.5 shadow-sm">
+                <div className="flex items-center justify-between px-1 text-[11px] font-bold text-slate-400">
+                  <span className="flex items-center gap-1.5 text-slate-300">
+                    <Gauge className="w-3.5 h-3.5 text-indigo-400" /> Difficulty
+                  </span>
+                  <span className="text-[10px] uppercase font-black tracking-wider text-indigo-400">
+                    {(settings.difficulty || 'dynamic') === 'dynamic' ? 'Dynamic: Easy → Med → Hard' : `${settings.difficulty} mode`}
+                  </span>
+                </div>
+                <div className="grid grid-cols-4 gap-1 p-0.5 bg-slate-950/70 rounded-xl border border-slate-800/80">
+                  {(
+                    [
+                      { id: 'dynamic', label: 'Dynamic', emoji: '🚀' },
+                      { id: 'easy', label: 'Easy', emoji: '🌱' },
+                      { id: 'medium', label: 'Medium', emoji: '⚡' },
+                      { id: 'hard', label: 'Hard', emoji: '🔥' },
+                    ] as const
+                  ).map((m) => {
+                    const active = (settings.difficulty || 'dynamic') === m.id;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => {
+                          setSettings({ ...settings, difficulty: m.id as DifficultyMode });
+                          sound.playCoin();
+                        }}
+                        className={`py-1.5 px-1 rounded-lg text-[11px] font-black transition-all flex flex-col sm:flex-row items-center justify-center gap-1 ${
+                          active
+                            ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-500/30'
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                        }`}
+                      >
+                        <span className="text-xs">{m.emoji}</span>
+                        <span className="truncate">{m.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

@@ -14,6 +14,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   currentTheme: 'classic',
   currentBird: 'classic',
   currentPipe: 'classic',
+  difficulty: 'dynamic',
 };
 
 const DEFAULT_STATS: PlayerStats = {
@@ -214,6 +215,10 @@ function App() {
         if (settings.currentTheme === 'night') {
           progress = Math.max(progress, score);
         }
+      } else if (achievement.id === 'reach_hard') {
+        if ((settings.difficulty || 'dynamic') === 'dynamic') {
+          progress = Math.max(progress, score);
+        }
       }
 
       const unlocked = progress >= achievement.target;
@@ -285,6 +290,8 @@ function App() {
           themeId={settings.currentTheme}
           birdSkinId={settings.currentBird}
           pipeSkinId={settings.currentPipe}
+          difficulty={settings.difficulty || 'dynamic'}
+          onDifficultyChange={(newDiff) => setSettings({ ...settings, difficulty: newDiff })}
           unlockedBirds={unlockedBirds}
           currentHighScore={stats.highScore}
           isLeaderboardWorthy={isLeaderboardWorthy}
