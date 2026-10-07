@@ -90,3 +90,36 @@ The project has been configured with relative asset paths (`base: './'`) in Vite
    - Select **Pages** from the left-hand menu.
    - Under **Build and deployment**, ensure the **Source** is set to "Deploy from a branch" and select the **Branch** as `gh-pages` (folder `/root`).
    - Save the settings. Your game will be live at `https://YOUR_USERNAME.github.io/YOUR_REPOSITORY/` shortly!
+
+---
+
+## 🌐 Deploying to Render (Static Site)
+
+This repository includes a `render.yaml` blueprint and `.node-version` for instant deployment on [Render](https://render.com/).
+
+### Option A: Using the Render Blueprint (Recommended)
+1. Push this repository to your GitHub or GitLab account.
+2. Log in to [Render Dashboard](https://dashboard.render.com/).
+3. Click **New +** and select **Blueprint**.
+4. Connect your repository. Render will automatically detect `render.yaml` and configure:
+   - **Service Type**: Static Site
+   - **Build Command**: `npm run build`
+   - **Publish Directory**: `dist`
+   - **SPA Rewrites**: `/* -> /index.html`
+5. Click **Apply**. Your game will be built and deployed with a free `https://<service-name>.onrender.com` SSL URL.
+
+### Option B: Manual Static Site Setup
+1. On the Render Dashboard, click **New +** > **Static Site**.
+2. Connect your GitHub/GitLab repository.
+3. Configure the following settings:
+   - **Name**: `flappy-bird-pro`
+   - **Branch**: `main`
+   - **Root Directory**: *(leave blank)*
+   - **Build Command**: `npm run build`
+   - **Publish Directory**: `dist`
+4. Under **Redirects/Rewrites**, add:
+   - **Type**: `Rewrite`
+   - **Source**: `/*`
+   - **Destination**: `/index.html`
+5. Click **Create Static Site**.
+
