@@ -61,6 +61,12 @@ const BGM_THEMES: { [key: string]: string[] } = {
     'Bb1', 'Bb1', 'D2', 'Bb1', 'F2', 'F2', 'G2', 'F2',
     'Ab1', 'Ab1', 'C2', 'Ab1', 'Eb2', 'Eb2', 'F2', 'Eb2',
     'G1', 'G1', 'B1', 'G1', 'D2', 'D2', 'Eb2', 'D2'
+  ],
+  halloween: [
+    'D3', 'C#3', 'D3', 'A2', 'F2', 'D2', 'G2', 'Bb2',
+    'D3', 'F3', 'E3', 'D3', 'C#3', 'E3', 'A3', 'A2',
+    'D3', 'F3', 'A3', 'D4', 'C#4', 'A3', 'G3', 'E3',
+    'F3', 'D3', 'Bb2', 'G2', 'A2', 'C#3', 'E3', 'D3'
   ]
 };
 
@@ -321,7 +327,7 @@ class SoundManager {
     const gain = this.ctx.createGain();
     
     // Change synth type based on theme
-    if (this.currentTheme === 'cyberpunk' || this.currentTheme === 'matrix') {
+    if (this.currentTheme === 'cyberpunk' || this.currentTheme === 'matrix' || this.currentTheme === 'halloween') {
       osc.type = 'sawtooth';
     } else if (this.currentTheme === 'military' || this.currentTheme === 'inferno') {
       osc.type = 'triangle';
@@ -345,12 +351,12 @@ class SoundManager {
       gain.gain.linearRampToValueAtTime(0.001, time + duration);
     }
     
-    // Add lowpass filter for cyberpunk to give it that deep synthwave warmth
+    // Add lowpass filter for cyberpunk and halloween to give that synthwave / organ warmth
     let lastNode: AudioNode = osc;
-    if (this.currentTheme === 'cyberpunk') {
+    if (this.currentTheme === 'cyberpunk' || this.currentTheme === 'halloween') {
       const lp = this.ctx.createBiquadFilter();
       lp.type = 'lowpass';
-      lp.frequency.setValueAtTime(1000, time);
+      lp.frequency.setValueAtTime(this.currentTheme === 'halloween' ? 1200 : 1000, time);
       osc.connect(lp);
       lastNode = lp;
     }

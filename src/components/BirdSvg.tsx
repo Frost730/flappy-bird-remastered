@@ -25,12 +25,21 @@ export const BirdSvg: React.FC<BirdSvgProps> = ({ bird, size = 48 }) => {
   const isNinja = bird.special === 'ninja';
   const isToxic = bird.special === 'toxic';
   const isCosmic = bird.special === 'cosmic';
+  const isHalloween = bird.special === 'halloween' || bird.id === 'halloween';
 
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" className="overflow-visible">
       {/* Cosmic Halo */}
       {isCosmic && (
         <ellipse cx="25" cy="8" rx="10" ry="3.5" fill="none" stroke="#c084fc" strokeWidth="2" strokeDasharray="3 2" />
+      )}
+
+      {/* Halloween Pumpkin Stem */}
+      {isHalloween && (
+        <g>
+          <path d="M 23 11 Q 25 3 30 5" fill="none" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" />
+          <ellipse cx="23" cy="11" rx="3.5" ry="1.5" fill="#15803d" />
+        </g>
       )}
 
       {/* Tail */}
@@ -95,6 +104,12 @@ export const BirdSvg: React.FC<BirdSvgProps> = ({ bird, size = 48 }) => {
           <rect x="27" y="18" width="10" height="6" fill="#0f172a" stroke="#1e293b" strokeWidth="1.5" rx="1" />
           <rect x="29" y="19.5" width="7" height="3" fill="#00f5ff" />
         </g>
+      ) : isHalloween ? (
+        <g>
+          {/* Triangular carved pumpkin eye */}
+          <polygon points="27,23 33,23 30,17" fill="#fef08a" stroke="#1e293b" strokeWidth="1.2" />
+          <polygon points="28.5,22.2 31.5,22.2 30,18.5" fill="#f59e0b" />
+        </g>
       ) : (
         <g>
           <circle cx="29" cy="20" r="5" fill="#ffffff" stroke="#1e293b" strokeWidth="1.5" />
@@ -113,7 +128,11 @@ export const BirdSvg: React.FC<BirdSvgProps> = ({ bird, size = 48 }) => {
       <path d="M 36 22 L 44 25 L 34 29 Z" fill={bird.beakColor} stroke="#1e293b" strokeWidth="1.5" />
 
       {/* Wing */}
-      <ellipse cx="20" cy="25" rx="7" ry="5" fill={bird.wingColor} stroke="#1e293b" strokeWidth="1.5" />
+      {isHalloween ? (
+        <path d="M 23 21 C 21 16, 13 17, 10 22 C 14 24, 13 28, 17 29 C 19 28, 20 27, 23 21 Z" fill={bird.wingColor} stroke="#1e293b" strokeWidth="1.5" />
+      ) : (
+        <ellipse cx="20" cy="25" rx="7" ry="5" fill={bird.wingColor} stroke="#1e293b" strokeWidth="1.5" />
+      )}
       {isCrown && (
         <ellipse cx="20" cy="25" rx="4" ry="2.5" fill="none" stroke="#fbbf24" strokeWidth="1" />
       )}

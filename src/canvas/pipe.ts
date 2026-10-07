@@ -78,6 +78,8 @@ function drawSinglePipe(
     drawGoldStuds(ctx, x, bodyY, width, bodyHeight);
   } else if (skin.id === 'toxic') {
     drawToxicSlime(ctx, x, bodyY, width, bodyHeight);
+  } else if (skin.id === 'halloween') {
+    drawHalloweenPipe(ctx, x, bodyY, width, bodyHeight, isTop);
   }
 
   // 2. DRAW PIPE LIP (CAP)
@@ -256,6 +258,65 @@ function drawToxicSlime(ctx: CanvasRenderingContext2D, x: number, y: number, w: 
     ctx.arc(x + w * 0.7, ty + 15, 4, 0, Math.PI * 2);
     ctx.fill();
   }
+  ctx.restore();
+}
+
+// Halloween carved pumpkin face and spooky cobweb
+function drawHalloweenPipe(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, isTop: boolean) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+
+  // Draw cobwebs in corners
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+  ctx.lineWidth = 1;
+  const webY = isTop ? y + h - 10 : y + 10;
+  ctx.beginPath();
+  ctx.moveTo(x, webY);
+  ctx.lineTo(x + 20, webY);
+  ctx.lineTo(x, webY + (isTop ? -20 : 20));
+  ctx.closePath();
+  ctx.stroke();
+
+  // Carved Jack-o'-Lantern glowing face in center of pipe
+  if (h > 60) {
+    const faceY = isTop ? y + h - 45 : y + 45;
+    const cx = x + w * 0.5;
+
+    ctx.fillStyle = '#fef08a';
+    ctx.shadowColor = '#f97316';
+    ctx.shadowBlur = 10;
+
+    // Glowing Eyes
+    ctx.beginPath();
+    // Left eye
+    ctx.moveTo(cx - 12, faceY - 8);
+    ctx.lineTo(cx - 4, faceY - 8);
+    ctx.lineTo(cx - 8, faceY - 16);
+    ctx.closePath();
+    // Right eye
+    ctx.moveTo(cx + 4, faceY - 8);
+    ctx.lineTo(cx + 12, faceY - 8);
+    ctx.lineTo(cx + 8, faceY - 16);
+    ctx.closePath();
+    ctx.fill();
+
+    // Carved sinister toothy smile
+    ctx.beginPath();
+    ctx.moveTo(cx - 14, faceY);
+    ctx.lineTo(cx - 8, faceY + 8);
+    ctx.lineTo(cx - 4, faceY + 4);
+    ctx.lineTo(cx, faceY + 10);
+    ctx.lineTo(cx + 4, faceY + 4);
+    ctx.lineTo(cx + 8, faceY + 8);
+    ctx.lineTo(cx + 14, faceY);
+    ctx.lineTo(cx + 10, faceY + 12);
+    ctx.lineTo(cx - 10, faceY + 12);
+    ctx.closePath();
+    ctx.fill();
+  }
+
   ctx.restore();
 }
 

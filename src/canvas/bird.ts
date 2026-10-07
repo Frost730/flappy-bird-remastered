@@ -29,9 +29,14 @@ export function drawBird(
   const isNinja = skin.special === 'ninja';
   const isToxic = skin.special === 'toxic';
   const isCosmic = skin.special === 'cosmic';
+  const isHalloween = skin.special === 'halloween' || skin.id === 'halloween';
 
   // 0. AURA / HALO / SPARKLES
-  if (isCrown) {
+  if (isHalloween) {
+    // Flickering candle flame glow
+    ctx.shadowColor = '#f97316';
+    ctx.shadowBlur = 10 + Math.sin(tick * 0.25) * 5;
+  } else if (isCrown) {
     // Subtle golden sparkle particle around king bird
     const sparkleAngle = tick * 0.05;
     const sx = Math.cos(sparkleAngle) * 22;
@@ -175,6 +180,19 @@ export function drawBird(
     ctx.beginPath();
     ctx.arc(8, 4, 3.5, 0, Math.PI * 2);
     ctx.fill();
+  } else if (isHalloween) {
+    // Green curved pumpkin stem
+    ctx.strokeStyle = '#16a34a';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(0, -15);
+    ctx.quadraticCurveTo(4, -26, 9, -24);
+    ctx.stroke();
+    // Stem base
+    ctx.fillStyle = '#15803d';
+    ctx.beginPath();
+    ctx.ellipse(0, -15, 4, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   // Ninja headband band across forehead
@@ -197,6 +215,25 @@ export function drawBird(
     ctx.shadowBlur = 6;
     ctx.fillRect(6, -5, 8, 3.5);
     ctx.shadowBlur = 0;
+  } else if (isHalloween) {
+    // Carved triangular jack-o'-lantern eye
+    ctx.fillStyle = '#fef08a';
+    ctx.beginPath();
+    ctx.moveTo(4, -1);
+    ctx.lineTo(12, -1);
+    ctx.lineTo(8, -9);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Inner ember core
+    ctx.fillStyle = '#f97316';
+    ctx.beginPath();
+    ctx.moveTo(6, -2);
+    ctx.lineTo(10, -2);
+    ctx.lineTo(8, -7);
+    ctx.closePath();
+    ctx.fill();
   } else {
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
@@ -244,10 +281,23 @@ export function drawBird(
   ctx.rotate(wingTilt);
   ctx.fillStyle = skin.wingColor;
 
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 8, wingHeight, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
+  if (isHalloween) {
+    // Spooky scalloped bat wing
+    ctx.beginPath();
+    ctx.moveTo(4, -1);
+    ctx.quadraticCurveTo(-2, -wingHeight - 2, -12, -wingHeight);
+    ctx.quadraticCurveTo(-8, -wingHeight / 2, -10, 0);
+    ctx.quadraticCurveTo(-5, wingHeight / 2, -6, wingHeight);
+    ctx.quadraticCurveTo(0, wingHeight / 2, 4, 1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 8, wingHeight, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
 
   // Wing accent line / gold trim for royal skin
   if (isCrown) {

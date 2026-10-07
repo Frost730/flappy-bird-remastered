@@ -376,6 +376,17 @@ export const Shop: React.FC<ShopProps> = ({
                         <div className="absolute -top-4 left-8 w-7 h-5 bg-[#6d755e] rounded-t-full"></div>
                       </div>
                     )}
+                    {theme.id === 'halloween' && (
+                      <>
+                        <div className="absolute top-2 right-4 w-6 h-6 bg-amber-400 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.6)]"></div>
+                        <div className="absolute top-4 left-6 text-[10px] select-none">🦇</div>
+                        <div className="absolute bottom-0 w-full h-6 bg-[#170f24] border-t border-[#f97316]/50">
+                          <div className="absolute -top-3 left-4 w-3 h-4 bg-[#2b1f3d] rounded-t-sm border border-slate-700"></div>
+                          <div className="absolute -top-4 left-9 w-3.5 h-5 bg-[#2b1f3d] rounded-t-sm border border-slate-700"></div>
+                          <div className="absolute -top-2.5 left-16 text-[9px] select-none">🎃</div>
+                        </div>
+                      </>
+                    )}
                   </div>
                   <h3 className="text-white text-lg font-bold">{theme.name}</h3>
                   <p className="text-slate-400 text-xs text-center mt-2 px-2 leading-relaxed">{theme.description}</p>

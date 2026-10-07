@@ -9,7 +9,7 @@ export interface BirdSkin {
   eyeColor: string;
   beakColor: string;
   wingColor: string;
-  special?: 'classic' | 'fire' | 'mecha' | 'crown' | 'ninja' | 'toxic' | 'cosmic' | 'random';
+  special?: 'classic' | 'fire' | 'mecha' | 'crown' | 'ninja' | 'toxic' | 'cosmic' | 'random' | 'halloween';
   description?: string;
 }
 

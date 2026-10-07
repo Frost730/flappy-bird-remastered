@@ -21,6 +21,9 @@ export function drawBackground(
     case 'inferno':
       drawInfernoTheme(ctx, width, height, scrollX);
       break;
+    case 'halloween':
+      drawHalloweenTheme(ctx, width, height, scrollX);
+      break;
     case 'night':
       drawNightTheme(ctx, width, height, scrollX);
       break;
@@ -424,6 +427,104 @@ function drawInfernoTheme(ctx: CanvasRenderingContext2D, width: number, height: 
   }
 }
 
+// 9. HALLOWEEN THEME
+function drawHalloweenTheme(ctx: CanvasRenderingContext2D, width: number, height: number, scrollX: number) {
+  // Midnight Spooky Sky Gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, height);
+  grad.addColorStop(0, '#090214'); // Pitch midnight violet
+  grad.addColorStop(0.5, '#2e1065'); // Witch purple
+  grad.addColorStop(1, '#581c87'); // Eerie plum
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, width, height);
+
+  // Giant Glowing Harvest Moon
+  const moonX = width - 85;
+  const moonY = 85;
+  
+  // Outer eerie orange aura
+  ctx.fillStyle = 'rgba(249, 115, 22, 0.22)';
+  ctx.beginPath();
+  ctx.arc(moonX, moonY, 52, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Full Moon Disc
+  ctx.fillStyle = '#fef08a';
+  ctx.beginPath();
+  ctx.arc(moonX, moonY, 34, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Moon craters
+  ctx.fillStyle = 'rgba(234, 179, 8, 0.25)';
+  ctx.beginPath();
+  ctx.arc(moonX - 8, moonY - 6, 7, 0, Math.PI * 2);
+  ctx.arc(moonX + 10, moonY + 8, 9, 0, Math.PI * 2);
+  ctx.arc(moonX - 4, moonY + 12, 5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Flying Silhouette Bats (Parallax 0.15)
+  ctx.fillStyle = '#0f051d';
+  const batOffset = (scrollX * 0.15) % 360;
+  for (let i = 0; i < 4; i++) {
+    const bx = (i * 120 - batOffset + 360) % (width + 60) - 20;
+    const by = 50 + ((i * 37) % 90);
+    const flap = Math.sin(scrollX * 0.2 + i * 2) * 5;
+    
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.quadraticCurveTo(bx - 6, by - 6 + flap, bx - 14, by - 2 + flap);
+    ctx.quadraticCurveTo(bx - 8, by + 4, bx, by + 3);
+    ctx.quadraticCurveTo(bx + 8, by + 4, bx + 14, by - 2 + flap);
+    ctx.quadraticCurveTo(bx + 6, by - 6 + flap, bx, by);
+    ctx.fill();
+  }
+
+  // Cemetery Gravestones & Twisted Trees (Parallax 0.35)
+  ctx.fillStyle = '#170f24';
+  const cemeteryOffset = (scrollX * 0.35) % 240;
+  for (let i = -1; i < width / 90 + 2; i++) {
+    const cx = i * 90 - cemeteryOffset;
+    if (i % 2 === 0) {
+      // Crooked tombstone
+      ctx.beginPath();
+      ctx.moveTo(cx, height - 112);
+      ctx.lineTo(cx, height - 140);
+      ctx.arc(cx + 10, height - 140, 10, Math.PI, 0);
+      ctx.lineTo(cx + 20, height - 112);
+      ctx.fill();
+      // Cross carving on tombstone
+      ctx.fillStyle = '#3b0764';
+      ctx.fillRect(cx + 8, height - 144, 4, 14);
+      ctx.fillRect(cx + 5, height - 139, 10, 3.5);
+      ctx.fillStyle = '#170f24';
+    } else {
+      // Gnarled dead spooky tree
+      ctx.beginPath();
+      ctx.moveTo(cx + 10, height - 112);
+      ctx.lineTo(cx + 13, height - 165);
+      // Left twisted branch
+      ctx.lineTo(cx - 5, height - 180);
+      ctx.lineTo(cx - 3, height - 176);
+      ctx.lineTo(cx + 14, height - 160);
+      // Right twisted branch
+      ctx.lineTo(cx + 15, height - 172);
+      ctx.lineTo(cx + 28, height - 185);
+      ctx.lineTo(cx + 26, height - 181);
+      ctx.lineTo(cx + 17, height - 156);
+      ctx.lineTo(cx + 19, height - 112);
+      ctx.fill();
+    }
+  }
+
+  // Floating purple spooky graveyard mist (Parallax 0.6)
+  ctx.fillStyle = 'rgba(168, 85, 247, 0.12)';
+  const mistOffset = (scrollX * 0.6) % 180;
+  for (let mx = -mistOffset; mx < width + 180; mx += 140) {
+    ctx.beginPath();
+    ctx.arc(mx + 60, height - 120, 45, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 // Helper to draw ground floor scroll
 export function drawGround(
   ctx: CanvasRenderingContext2D,
@@ -467,6 +568,10 @@ export function drawGround(
     fillStyle = '#18181b';
     borderStyle = '#dc2626';
     patternStyle = '#991b1b';
+  } else if (themeId === 'halloween') {
+    fillStyle = '#170f24';
+    borderStyle = '#ea580c'; // Jack-o'-lantern orange border
+    patternStyle = '#3b0764';
   }
 
   // Draw ground main block
@@ -475,7 +580,7 @@ export function drawGround(
 
   // Draw top border line
   ctx.strokeStyle = borderStyle;
-  ctx.lineWidth = themeId === 'cyberpunk' || themeId === 'matrix' ? 4 : 2;
+  ctx.lineWidth = themeId === 'cyberpunk' || themeId === 'matrix' || themeId === 'halloween' ? 4 : 2;
   ctx.beginPath();
   ctx.moveTo(0, gy);
   ctx.lineTo(width, gy);
@@ -511,6 +616,21 @@ export function drawGround(
     for (let x = -hatchOffset; x < width + 24; x += 32) {
       ctx.fillStyle = sprinkleColors[Math.abs(Math.floor(x)) % sprinkleColors.length];
       ctx.fillRect(x + 8, gy + 20, 6, 2.5);
+    }
+  } else if (themeId === 'halloween') {
+    // Little glowing Jack-o'-lantern pumpkins along the graveyard edge
+    for (let x = -hatchOffset; x < width + 36; x += 72) {
+      const px = x + 16;
+      const py = gy + 24;
+      ctx.fillStyle = '#ea580c';
+      ctx.beginPath();
+      ctx.arc(px, py, 7, 0, Math.PI * 2);
+      ctx.fill();
+      // Glowing candle eyes
+      ctx.fillStyle = '#fef08a';
+      ctx.fillRect(px - 3, py - 2, 2, 2);
+      ctx.fillRect(px + 1, py - 2, 2, 2);
+      ctx.fillRect(px - 2, py + 2, 4, 1.5);
     }
   }
 }

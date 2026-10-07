@@ -96,6 +96,18 @@ export const BIRD_SKINS: BirdSkin[] = [
     eyeColor: '#38bdf8',   // galactic cyan
     special: 'cosmic',
     description: 'Celestial voyager crowned with a floating astral aura.'
+  },
+  {
+    id: 'halloween',
+    name: "🎃 Jack-o'-Flapper",
+    cost: 180,
+    unlocked: false,
+    color: '#ea580c',      // pumpkin orange 600
+    wingColor: '#581c87',  // midnight bat purple 900
+    beakColor: '#facc15',  // candle gold
+    eyeColor: '#fef08a',   // glowing candlelight
+    special: 'halloween',
+    description: "A haunted jack-o'-lantern flapper with a green stem, glowing carved eyes, and spooky bat wings."
   }
 ];
 
@@ -186,6 +198,15 @@ export const PIPE_SKINS: PipeSkin[] = [
     unlocked: false,
     primaryColor: '#4b5563', // gray 600
     accentColor: '#9ca3af'   // gray 400
+  },
+  {
+    id: 'halloween',
+    name: '🎃 Haunted Crypt',
+    cost: 180,
+    unlocked: false,
+    primaryColor: '#3b0764', // cemetery purple 900
+    accentColor: '#ea580c',  // pumpkin orange 600
+    glowColor: '#f97316'     // eerie candle glow
   }
 ];
 
@@ -279,6 +300,16 @@ export const THEMES: ThemeSkin[] = [
     groundColor: '#7a705e',
     obstacleColor: 'military',
     description: 'A camouflage desert dune terrain with structures.'
+  },
+  {
+    id: 'halloween',
+    name: '🎃 Haunted Hollow',
+    cost: 200,
+    unlocked: false,
+    skyColor: '#090214',
+    groundColor: '#170f24',
+    obstacleColor: 'halloween',
+    description: 'Spooky midnight graveyard with a giant harvest moon, flying bats, and misty dead trees.'
   }
 ];
 
