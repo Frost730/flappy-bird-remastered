@@ -118,12 +118,12 @@ export const GameView: React.FC<GameViewProps> = ({
       sound.startBGM(themeId);
       
       // Apply initial jump on start so the bird rises immediately
-      current.birdVelocity = -3.3;
+      current.birdVelocity = -4.8;
       const newFlaps = createFlapParticles(100, current.birdY, '#e2e8f0');
       current.particles.push(...newFlaps);
     } else if (current.gameState === 'PLAYING') {
       // Core flap impulse
-      current.birdVelocity = -3.3;
+      current.birdVelocity = -4.8;
       sound.playFlap();
       
       // Spawn white flap dust
@@ -203,26 +203,34 @@ export const GameView: React.FC<GameViewProps> = ({
       drawBackground(ctx, V_WIDTH, V_HEIGHT, current.scrollX, themeId);
 
       // Handle game state updates
-      if (current.gameState === 'PLAYING') {
-        // Scroll speed increases with score (difficulty scaling)
-        const currentSpeed = 1.6 + Math.min(2.0, current.score * 0.04);
+      if (current.gameState === 'MENU') {
+        // Subtle sinusoidal hover and parallax scroll on ready screen
+        current.birdFlapTick += 1;
+        current.birdY = 250 + Math.sin(current.birdFlapTick * 0.08) * 6;
+        current.birdVelocity = 0;
+        current.scrollX += 1.2;
+      } else if (current.gameState === 'PLAYING') {
+        // Scroll speed: balanced arcade baseline that gradually escalates with score
+        const currentSpeed = 2.2 + Math.min(1.4, current.score * 0.03);
         current.scrollX += currentSpeed;
 
-        // Apply gravity to bird
-        current.birdVelocity += 0.11; // gravity force
+        // Apply snappy arcade gravity with terminal velocity cap
+        current.birdVelocity += 0.22;
+        if (current.birdVelocity > 7.6) {
+          current.birdVelocity = 7.6;
+        }
         current.birdY += current.birdVelocity;
         current.birdFlapTick += 1;
 
         // Keep bird in bounds of sky ceiling
         if (current.birdY < 16) {
           current.birdY = 16;
-          current.birdVelocity = 0.5;
+          current.birdVelocity = 0;
         }
 
-        // Spawn / Scroll pipes
-        // Dynamic pipe gap size and horizontal spacing (difficulty scaling)
-        const gapSize = Math.max(125, 200 - Math.min(75, current.score * 0.8));
-        const pipeSpacing = Math.max(200, 300 - Math.min(100, current.score * 1.5));
+        // Dynamic pipe gap size and horizontal spacing (balanced difficulty curve)
+        const gapSize = Math.max(132, 162 - Math.min(30, current.score * 0.75));
+        const pipeSpacing = Math.max(190, 240 - Math.min(50, current.score * 1.0));
 
         if (
           current.pipes.length === 0 ||

@@ -12,10 +12,13 @@ export function drawBird(
   ctx.translate(x, y);
 
   // Calculate rotation based on velocity:
-  // - velocity < 0: flapping / rising -> tilt up
-  // - velocity > 0: falling -> tilt down
-  // Clamp between -25 deg (-0.43 rad) and 70 deg (1.22 rad)
-  const angle = Math.max(-0.4, Math.min(1.1, velocity * 0.07));
+  // - velocity < 0: flapping / rising -> snappy tilt up (~ -25 deg)
+  // - velocity >= 0: falling -> progressively dive down toward steep nosedive (~ 72 deg)
+  const angle = velocity < 0
+    ? Math.max(-0.45, velocity * 0.09)
+    : velocity < 2
+    ? velocity * 0.08
+    : Math.min(1.25, 0.16 + (velocity - 2) * 0.2);
   ctx.rotate(angle);
 
   // Black outline style for retro feel
