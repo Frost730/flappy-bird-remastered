@@ -28,7 +28,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries }) => {
 
   const renderDifficultyBadge = (entry: LeaderboardEntry) => {
     // If the entry stored a specific difficultyTier, use it; otherwise deduce from score or default
-    const tier = entry.difficultyTier || (entry.score >= 25 ? 'hard' : entry.score >= 10 ? 'medium' : 'easy');
+    const tier = entry.difficultyTier || (entry.score >= 50 ? 'hard' : entry.score >= 20 ? 'medium' : 'easy');
     const mode = entry.difficulty;
 
     let style = 'bg-emerald-500/15 border-emerald-500/35 text-emerald-300';

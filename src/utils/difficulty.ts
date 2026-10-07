@@ -12,6 +12,9 @@ export interface DifficultyConfig {
   tierEmoji: string;
 }
 
+export const DYNAMIC_EASY_THRESHOLD = 20;   // Easy: 0 - 19
+export const DYNAMIC_MEDIUM_THRESHOLD = 50; // Medium: 20 - 49, Hard: 50+
+
 export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynamic'): DifficultyConfig {
   if (mode === 'easy') {
     return {
@@ -49,9 +52,10 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
     };
   }
 
-  // Dynamic Mode: Easy (0-9) -> Medium (10-24) -> Hard (25+)
-  if (score < 10) {
-    const p = score / 10;
+  // Dynamic Mode: Easy (0-19) -> Medium (20-49) -> Hard (50+)
+  // Extended durations so each difficulty stays longer and feels substantial
+  if (score < DYNAMIC_EASY_THRESHOLD) {
+    const p = score / DYNAMIC_EASY_THRESHOLD;
     return {
       speed: 1.55 + p * 0.22, // 1.55 -> 1.77
       gapSize: Math.round(186 - p * 16), // 186 -> 170
@@ -61,8 +65,8 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       tierLabel: 'Easy',
       tierEmoji: '🌱'
     };
-  } else if (score < 25) {
-    const p = (score - 10) / 15;
+  } else if (score < DYNAMIC_MEDIUM_THRESHOLD) {
+    const p = (score - DYNAMIC_EASY_THRESHOLD) / (DYNAMIC_MEDIUM_THRESHOLD - DYNAMIC_EASY_THRESHOLD);
     return {
       speed: 1.82 + p * 0.32, // 1.82 -> 2.14
       gapSize: Math.round(166 - p * 18), // 166 -> 148
@@ -78,7 +82,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
     // Speed never exceeds 2.45
     // Horizontal spacing never below 215px
     // maxDeltaY capped at 140px (guaranteed reachable in a jump arc)
-    const p = Math.min(1, (score - 25) / 25);
+    const p = Math.min(1, (score - DYNAMIC_MEDIUM_THRESHOLD) / 30);
     return {
       speed: 2.18 + p * 0.27, // 2.18 -> max 2.45
       gapSize: Math.round(145 - p * 9), // 145 -> min 136

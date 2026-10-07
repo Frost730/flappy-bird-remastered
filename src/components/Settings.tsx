@@ -114,7 +114,7 @@ export const Settings: React.FC<SettingsProps> = ({ settings, setSettings, onRes
                 name: '🚀 Dynamic (Recommended)',
                 badge: 'Progression',
                 badgeColor: 'border-violet-500/40 text-violet-300 bg-violet-500/10',
-                desc: 'Starts Easy (0-9), escalates to Medium (10-24), and hits Hard (25+). Challenging and fair!'
+                desc: 'Starts Easy (0-19), escalates to Medium (20-49), and hits Hard (50+). Longer, well-paced phases!'
               },
               {
                 id: 'easy',
