@@ -26,7 +26,7 @@ interface GameViewProps {
   unlockedBirds?: string[];
   currentHighScore: number;
   isLeaderboardWorthy: (score: number) => boolean;
-  onSaveLeaderboard: (name: string, score: number) => void;
+  onSaveLeaderboard: (name: string, score: number, difficultyTier?: DifficultyTier, difficultyMode?: DifficultyMode) => void;
   onGameOver: (score: number, coinsCollected: number, flightSeconds: number) => void;
   onBackToMenu: () => void;
 }
@@ -204,7 +204,7 @@ export const GameView: React.FC<GameViewProps> = ({
   const handleLeaderboardSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!playerName.trim()) return;
-    onSaveLeaderboard(playerName.trim(), score);
+    onSaveLeaderboard(playerName.trim(), score, currentTier, difficulty);
     setShowLeaderboardInput(false);
   };
 
@@ -592,7 +592,9 @@ export const GameView: React.FC<GameViewProps> = ({
               <form onSubmit={handleLeaderboardSubmit} className="glass-panel p-5 rounded-2xl border border-slate-800 w-full max-w-[280px] text-center space-y-4 animate-pulse-glow" onClick={(e) => e.stopPropagation()}>
                 <Award className="w-10 h-10 text-yellow-400 mx-auto animate-bounce" />
                 <h3 className="text-white font-extrabold text-lg uppercase tracking-wider">New Record!</h3>
-                <p className="text-slate-400 text-xs leading-relaxed">Your score of {score} qualifies for the leaderboard! Enter your name:</p>
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  Your score of <span className="text-white font-black">{score}</span> on <span className="text-amber-400 font-extrabold">{currentTier.toUpperCase()}</span> difficulty qualifies for the leaderboard! Enter your name:
+                </p>
                 <input
                   type="text"
                   maxLength={12}

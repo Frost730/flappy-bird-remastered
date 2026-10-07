@@ -26,12 +26,44 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries }) => {
     return 'bg-slate-900/30 border-slate-800/40 text-slate-300';
   };
 
+  const renderDifficultyBadge = (entry: LeaderboardEntry) => {
+    // If the entry stored a specific difficultyTier, use it; otherwise deduce from score or default
+    const tier = entry.difficultyTier || (entry.score >= 25 ? 'hard' : entry.score >= 10 ? 'medium' : 'easy');
+    const mode = entry.difficulty;
+
+    let style = 'bg-emerald-500/15 border-emerald-500/35 text-emerald-300';
+    let emoji = '🌱';
+    let label = 'Easy';
+
+    if (tier === 'medium') {
+      style = 'bg-amber-500/15 border-amber-500/35 text-amber-300';
+      emoji = '⚡';
+      label = 'Medium';
+    } else if (tier === 'hard') {
+      style = 'bg-rose-500/15 border-rose-500/35 text-rose-300';
+      emoji = '🔥';
+      label = 'Hard';
+    }
+
+    return (
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border w-fit ${style}`}>
+          <span>{emoji}</span>
+          <span>{label}</span>
+        </span>
+        {mode === 'dynamic' && (
+          <span className="text-[10px] text-slate-500 font-semibold">(Dynamic)</span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="pb-6 border-b border-slate-700/40">
         <h2 className="text-3xl font-extrabold text-white">Local Leaderboard</h2>
-        <p className="text-slate-400 text-sm mt-1">Track the top 10 runs recorded on this device.</p>
+        <p className="text-slate-400 text-sm mt-1">Track the top 10 runs recorded on this device with difficulty at end of flight.</p>
       </div>
 
       {sortedEntries.length === 0 ? (
@@ -53,6 +85,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries }) => {
                   <tr className="border-b border-slate-800/80 bg-slate-950/40 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                     <th className="py-4 px-6 text-center w-20">Rank</th>
                     <th className="py-4 px-6">Player</th>
+                    <th className="py-4 px-6">Died In</th>
                     <th className="py-4 px-6">Date</th>
                     <th className="py-4 px-6 text-right">Score</th>
                   </tr>
@@ -72,6 +105,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries }) => {
                       </td>
                       <td className="py-4 px-6 font-bold text-white text-sm sm:text-base">
                         {entry.name}
+                      </td>
+                      <td className="py-4 px-6 text-xs sm:text-sm">
+                        {renderDifficultyBadge(entry)}
                       </td>
                       <td className="py-4 px-6 text-xs sm:text-sm text-slate-400">
                         <span className="flex items-center gap-1.5">

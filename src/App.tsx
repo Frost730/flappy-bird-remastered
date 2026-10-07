@@ -5,7 +5,7 @@ import { sound } from './utils/sound';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { generateDailyChallenges, checkDailyReset } from './utils/daily';
 import { INITIAL_ACHIEVEMENTS } from './utils/constants';
-import type { GameSettings, PlayerStats, LeaderboardEntry, Achievement, DailyChallenge } from './types/game';
+import type { GameSettings, PlayerStats, LeaderboardEntry, Achievement, DailyChallenge, DifficultyTier, DifficultyMode } from './types/game';
 import { Award, X } from 'lucide-react';
 
 const DEFAULT_SETTINGS: GameSettings = {
@@ -92,11 +92,18 @@ function App() {
   };
 
   // Submit and save new score to leaderboard
-  const handleSaveLeaderboard = (name: string, score: number) => {
+  const handleSaveLeaderboard = (
+    name: string,
+    score: number,
+    difficultyTier?: DifficultyTier,
+    difficultyMode?: DifficultyMode
+  ) => {
     const newEntry: LeaderboardEntry = {
       name,
       score,
-      date: new Date().toLocaleDateString()
+      date: new Date().toLocaleDateString(),
+      difficulty: difficultyMode || settings.difficulty || 'dynamic',
+      difficultyTier: difficultyTier || 'easy'
     };
     const updated = [...leaderboard, newEntry]
       .sort((a, b) => b.score - a.score)

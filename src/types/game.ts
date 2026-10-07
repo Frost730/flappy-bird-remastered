@@ -70,13 +70,16 @@ export interface DailyChallenge {
   rarity?: 'easy' | 'medium' | 'hard' | 'legendary';
 }
 
+export type DifficultyTier = 'easy' | 'medium' | 'hard';
+export type DifficultyMode = 'dynamic' | 'easy' | 'medium' | 'hard';
+
 export interface LeaderboardEntry {
   name: string;
   score: number;
   date: string;
+  difficulty?: DifficultyMode;
+  difficultyTier?: DifficultyTier;
 }
-
-export type DifficultyMode = 'dynamic' | 'easy' | 'medium' | 'hard';
 
 export interface GameSettings {
   bgmVolume: number;
