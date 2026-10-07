@@ -20,6 +20,7 @@ interface GameViewProps {
   themeId: string;
   birdSkinId: string;
   pipeSkinId: string;
+  unlockedBirds?: string[];
   currentHighScore: number;
   isLeaderboardWorthy: (score: number) => boolean;
   onSaveLeaderboard: (name: string, score: number) => void;
@@ -48,6 +49,7 @@ export const GameView: React.FC<GameViewProps> = ({
   themeId,
   birdSkinId,
   pipeSkinId,
+  unlockedBirds,
   currentHighScore,
   isLeaderboardWorthy,
   onSaveLeaderboard,
@@ -64,9 +66,22 @@ export const GameView: React.FC<GameViewProps> = ({
   const [showLeaderboardInput, setShowLeaderboardInput] = useState(false);
   const [playerName, setPlayerName] = useState('');
 
+  // Resolve bird skin for the run (supports random skin rolls on each play)
+  const pickSkin = () => {
+    if (birdSkinId === 'random') {
+      const candidates = (unlockedBirds || ['classic']).filter((id) => id !== 'random');
+      const chosenId = candidates.length > 0
+        ? candidates[Math.floor(Math.random() * candidates.length)]
+        : 'classic';
+      return BIRD_SKINS.find((b) => b.id === chosenId) || BIRD_SKINS[0];
+    }
+    return BIRD_SKINS.find((b) => b.id === birdSkinId) || BIRD_SKINS[0];
+  };
+
   // References for mutable game loop state (avoids closure stale references)
   const stateRef = useRef({
     gameState: 'MENU' as GameState,
+    activeSkin: BIRD_SKINS.find((b) => b.id === (birdSkinId === 'random' ? 'classic' : birdSkinId)) || BIRD_SKINS[0],
     birdY: 250,
     birdVelocity: 0,
     birdFlapTick: 0,
@@ -80,11 +95,11 @@ export const GameView: React.FC<GameViewProps> = ({
     activeAchievementsThisRun: [] as string[]
   });
 
-  const birdSkin = BIRD_SKINS.find((b) => b.id === birdSkinId) || BIRD_SKINS[0];
   const pipeSkin = PIPE_SKINS.find((p) => p.id === pipeSkinId) || PIPE_SKINS[0];
 
   // Helper: Reset game variables
   const resetGame = () => {
+    stateRef.current.activeSkin = pickSkin();
     stateRef.current.birdY = 250;
     stateRef.current.birdVelocity = 0;
     stateRef.current.birdFlapTick = 0;
@@ -111,6 +126,7 @@ export const GameView: React.FC<GameViewProps> = ({
     const current = stateRef.current;
     
     if (current.gameState === 'MENU') {
+      current.activeSkin = pickSkin();
       current.gameState = 'PLAYING';
       setGameState('PLAYING');
       sound.playFlap();
@@ -322,7 +338,7 @@ export const GameView: React.FC<GameViewProps> = ({
       drawParticles(ctx, current.particles);
 
       // Draw Bird
-      drawBird(ctx, 100, current.birdY, current.birdVelocity, current.birdFlapTick, birdSkin);
+      drawBird(ctx, 100, current.birdY, current.birdVelocity, current.birdFlapTick, current.activeSkin);
 
       // Draw Ground (Parallax 1.0 - absolute sync)
       drawGround(ctx, V_WIDTH, V_HEIGHT, current.scrollX, themeId);
@@ -340,7 +356,7 @@ export const GameView: React.FC<GameViewProps> = ({
       sound.playHit();
 
       // Feathers explosion effect!
-      const feathers = createHitParticles(100, current.birdY, birdSkin.color, birdSkin.wingColor);
+      const feathers = createHitParticles(100, current.birdY, current.activeSkin.color, current.activeSkin.wingColor);
       current.particles.push(...feathers);
 
       // Report final statistics

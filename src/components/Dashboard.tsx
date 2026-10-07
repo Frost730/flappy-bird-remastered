@@ -15,9 +15,12 @@ import {
   Coins,
   ShieldCheck,
   CheckCircle,
-  Circle
+  Circle,
+  Dices
 } from 'lucide-react';
 import { BIRD_SKINS } from '../utils/constants';
+import { BirdSvg } from './BirdSvg';
+import { sound } from '../utils/sound';
 
 interface DashboardProps {
   stats: PlayerStats;
@@ -63,6 +66,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [activeTab, setActiveTab] = useState<TabType>('play');
 
   const activeBird = BIRD_SKINS.find((b) => b.id === settings.currentBird) || BIRD_SKINS[0];
+
+  const randomizeBird = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const valid = unlockedBirds.filter((id) => id !== 'random');
+    if (valid.length > 0) {
+      const chosen = valid[Math.floor(Math.random() * valid.length)];
+      setSettings({ ...settings, currentBird: chosen });
+      sound.playCoin();
+    }
+  };
 
   const menuItems = [
     { id: 'play', label: 'Flight Deck', icon: Play },
@@ -167,14 +180,22 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
                 {/* Animated Floating Bird Preview */}
                 <div className="animate-float z-10 flex flex-col items-center">
-                  <svg width="64" height="64" viewBox="0 0 48 48">
-                    <path d="M 10 24 Q 0 16 2 24 Q 0 32 10 28 Z" fill={activeBird.wingColor} />
-                    <circle cx="24" cy="24" r="14" fill={activeBird.color} stroke="#1e293b" strokeWidth="2.5" />
-                    <circle cx="29" cy="20" r="5.5" fill="#ffffff" stroke="#1e293b" strokeWidth="1.8" />
-                    <circle cx="30.5" cy="20" r="2.2" fill={activeBird.eyeColor} />
-                    <path d="M 36 22 L 44 25 L 34 29 Z" fill={activeBird.beakColor} stroke="#1e293b" strokeWidth="1.8" />
-                    <ellipse cx="20" cy="25" rx="7.5" ry="5.5" fill={activeBird.wingColor} stroke="#1e293b" strokeWidth="1.8" />
-                  </svg>
+                  <BirdSvg bird={activeBird} size={80} />
+                </div>
+
+                {/* Active skin label & Quick Randomize button */}
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between z-20">
+                  <div className="bg-slate-950/75 backdrop-blur-md border border-slate-700/60 py-1 px-3 rounded-full text-xs font-bold text-white shadow-sm flex items-center gap-1.5 truncate max-w-[80%]">
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: activeBird.color }}></span>
+                    <span className="truncate">{activeBird.name}</span>
+                  </div>
+                  <button
+                    onClick={randomizeBird}
+                    title="Roll a random unlocked bird"
+                    className="bg-slate-950/75 hover:bg-slate-900 border border-slate-700/60 p-1.5 rounded-full text-amber-400 hover:text-amber-300 shadow-sm transition-transform active:scale-90"
+                  >
+                    <Dices className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
 

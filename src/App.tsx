@@ -228,6 +228,7 @@ function App() {
           themeId={settings.currentTheme}
           birdSkinId={settings.currentBird}
           pipeSkinId={settings.currentPipe}
+          unlockedBirds={unlockedBirds}
           currentHighScore={stats.highScore}
           isLeaderboardWorthy={isLeaderboardWorthy}
           onSaveLeaderboard={handleSaveLeaderboard}

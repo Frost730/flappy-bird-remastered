@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { BIRD_SKINS, PIPE_SKINS, THEMES } from '../utils/constants';
 import type { GameSettings } from '../types/game';
-import { Coins, Lock, Check } from 'lucide-react';
+import { Coins, Lock, Check, Dices } from 'lucide-react';
 import { sound } from '../utils/sound';
+import { BirdSvg } from './BirdSvg';
 
 interface ShopProps {
   coins: number;
@@ -73,6 +74,15 @@ export const Shop: React.FC<ShopProps> = ({
     }
   };
 
+  const randomizeBird = () => {
+    const valid = unlockedBirds.filter((id) => id !== 'random');
+    if (valid.length > 0) {
+      const chosen = valid[Math.floor(Math.random() * valid.length)];
+      setSettings({ ...settings, currentBird: chosen });
+      sound.playCoin();
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Shop Header */}
@@ -81,11 +91,21 @@ export const Shop: React.FC<ShopProps> = ({
           <h2 className="text-3xl font-extrabold text-white">Item Shop</h2>
           <p className="text-slate-400 text-sm mt-1">Unlock rare bird skins, customized pipes, and parallax environments.</p>
         </div>
-        {/* Balance */}
-        <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-4 py-2 rounded-full w-fit">
-          <Coins className="w-5 h-5 text-amber-400 animate-pulse" />
-          <span className="font-extrabold text-amber-300 text-lg">{coins}</span>
-          <span className="text-amber-400/70 text-xs font-medium uppercase tracking-wider">Coins</span>
+        {/* Balance & Quick Randomizer */}
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={randomizeBird}
+            title="Randomize currently equipped bird skin"
+            className="flex items-center gap-1.5 bg-violet-600/20 hover:bg-violet-600/30 border border-violet-500/40 text-violet-300 px-3.5 py-2 rounded-full font-bold text-xs transition-colors shadow-sm"
+          >
+            <Dices className="w-4 h-4 text-violet-400" />
+            <span>Randomize</span>
+          </button>
+          <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-4 py-2 rounded-full w-fit">
+            <Coins className="w-5 h-5 text-amber-400 animate-pulse" />
+            <span className="font-extrabold text-amber-300 text-lg">{coins}</span>
+            <span className="text-amber-400/70 text-xs font-medium uppercase tracking-wider">Coins</span>
+          </div>
         </div>
       </div>
 
@@ -129,27 +149,19 @@ export const Shop: React.FC<ShopProps> = ({
               >
                 <div className="flex flex-col items-center">
                   {/* Bird Preview (Procedural Visual Box) */}
-                  <div className="w-24 h-24 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-center relative mb-4 overflow-hidden">
-                    <div className="absolute inset-0 bg-radial-gradient from-violet-500/5 to-transparent"></div>
-                    {/* Tiny animated SVG preview */}
-                    <svg width="48" height="48" viewBox="0 0 48 48">
-                      {/* Tail */}
-                      <path d="M 10 24 Q 0 16 2 24 Q 0 32 10 28 Z" fill={bird.wingColor} />
-                      {/* Body */}
-                      <circle cx="24" cy="24" r="14" fill={bird.color} stroke="#1e293b" strokeWidth="2" />
-                      {/* Eye */}
-                      <circle cx="29" cy="20" r="5" fill="#ffffff" stroke="#1e293b" strokeWidth="1.5" />
-                      <circle cx="30.5" cy="20" r="2" fill={bird.eyeColor} />
-                      {/* Beak */}
-                      <path d="M 36 22 L 44 25 L 34 29 Z" fill={bird.beakColor} stroke="#1e293b" strokeWidth="1.5" />
-                      {/* Wing */}
-                      <ellipse cx="20" cy="25" rx="7" ry="5" fill={bird.wingColor} stroke="#1e293b" strokeWidth="1.5" />
-                    </svg>
+                  <div className="w-24 h-24 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-center relative mb-4 overflow-hidden shadow-inner">
+                    <div className="absolute inset-0 bg-radial-gradient from-violet-500/10 to-transparent"></div>
+                    <BirdSvg bird={bird} size={56} />
                   </div>
-                  <h3 className="text-white text-lg font-bold">{bird.name}</h3>
-                  <p className="text-slate-400 text-xs mt-1">
-                    {bird.cost === 0 ? 'Starter skin' : `Unlocks for ${bird.cost} coins`}
+                  <h3 className="text-white text-lg font-bold text-center">{bird.name}</h3>
+                  <p className="text-slate-400 text-xs mt-1 text-center font-medium">
+                    {bird.id === 'random' ? 'Always free' : bird.cost === 0 ? 'Starter skin' : `Unlocks for ${bird.cost} coins`}
                   </p>
+                  {bird.description && (
+                    <p className="text-slate-500 text-[11px] mt-2 text-center line-clamp-2 px-1 leading-snug">
+                      {bird.description}
+                    </p>
+                  )}
                 </div>
 
                 <div className="mt-6">

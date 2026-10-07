@@ -6,40 +6,96 @@ export const BIRD_SKINS: BirdSkin[] = [
     name: 'Classic Yellow',
     cost: 0,
     unlocked: true,
-    color: '#fcd34d',      // yellow 300
-    wingColor: '#f59e0b',  // yellow 500
+    color: '#fde047',      // bright sunny yellow 300
+    wingColor: '#eab308',  // golden yellow 500
     beakColor: '#f97316',  // orange 500
-    eyeColor: '#000000'
+    eyeColor: '#0f172a',
+    special: 'classic',
+    description: 'The original iconic retro flapper with rosy cheeks.'
   },
   {
     id: 'red',
-    name: 'Crimson Fury',
+    name: 'Crimson Phoenix',
     cost: 50,
     unlocked: false,
-    color: '#f87171',      // red 400
-    wingColor: '#dc2626',  // red 600
-    beakColor: '#ea580c',  // orange 600
-    eyeColor: '#000000'
+    color: '#ef4444',      // fiery red 500
+    wingColor: '#b91c1c',  // deep ember red 700
+    beakColor: '#fb923c',  // flame orange 400
+    eyeColor: '#facc15',   // piercing gold eye
+    special: 'fire',
+    description: 'A blazing firebird with flame crest plumage.'
   },
   {
     id: 'blue',
-    name: 'Sky Swooper',
+    name: 'Cyber Mecha',
     cost: 100,
     unlocked: false,
-    color: '#60a5fa',      // blue 400
-    wingColor: '#2563eb',  // blue 600
-    beakColor: '#f97316',
-    eyeColor: '#ffffff'
+    color: '#38bdf8',      // cyan titanium 400
+    wingColor: '#0284c7',  // steel blue 600
+    beakColor: '#e2e8f0',  // chrome beak
+    eyeColor: '#00f5ff',   // neon laser visor
+    special: 'mecha',
+    description: 'Robotic bird equipped with an antenna and glowing cyber visor.'
   },
   {
     id: 'golden',
-    name: 'Golden Legend',
+    name: 'Royal Sovereign',
     cost: 250,
     unlocked: false,
-    color: '#fbbf24',      // amber 400
-    wingColor: '#d97706',  // amber 600
-    beakColor: '#ea580c',
-    eyeColor: '#3b82f6'    // blue glowing eye
+    color: '#fbbf24',      // pure glittering gold
+    wingColor: '#9333ea',  // imperial purple velvet wing
+    beakColor: '#f59e0b',  // gold beak
+    eyeColor: '#38bdf8',   // sapphire glowing gem eye
+    special: 'crown',
+    description: 'Adorned with a ruby-encrusted royal crown and purple velvet wing.'
+  },
+  {
+    id: 'ninja',
+    name: 'Shadow Shinobi',
+    cost: 150,
+    unlocked: false,
+    color: '#334155',      // slate 700 ninja suit
+    wingColor: '#0f172a',  // midnight black wing
+    beakColor: '#94a3b8',  // kunai steel beak
+    eyeColor: '#ffffff',   // glowing white ninja eye
+    special: 'ninja',
+    description: 'Stealth night bird wearing a red headband with fluttering ties.'
+  },
+  {
+    id: 'toxic',
+    name: 'Neon Dragon',
+    cost: 200,
+    unlocked: false,
+    color: '#22c55e',      // radioactive lime green
+    wingColor: '#15803d',  // emerald scale wing
+    beakColor: '#a3e635',  // acid lime beak
+    eyeColor: '#facc15',   // reptilian slit eye
+    special: 'toxic',
+    description: 'Draconic flyer with neon horns and razor scales.'
+  },
+  {
+    id: 'cosmic',
+    name: 'Astral Voyager',
+    cost: 300,
+    unlocked: false,
+    color: '#6366f1',      // deep nebula indigo
+    wingColor: '#ec4899',  // starlight pink wing
+    beakColor: '#fde047',  // star yellow beak
+    eyeColor: '#38bdf8',   // galactic cyan
+    special: 'cosmic',
+    description: 'Celestial voyager crowned with a floating astral aura.'
+  },
+  {
+    id: 'random',
+    name: '🎲 Random Skin',
+    cost: 0,
+    unlocked: true,
+    color: '#ec4899',
+    wingColor: '#8b5cf6',
+    beakColor: '#eab308',
+    eyeColor: '#06b6d4',
+    special: 'random',
+    description: 'Surprise! Selects a random bird skin from your unlocked collection each run.'
   }
 ];
 

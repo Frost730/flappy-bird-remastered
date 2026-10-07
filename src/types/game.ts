@@ -9,6 +9,8 @@ export interface BirdSkin {
   eyeColor: string;
   beakColor: string;
   wingColor: string;
+  special?: 'classic' | 'fire' | 'mecha' | 'crown' | 'ninja' | 'toxic' | 'cosmic' | 'random';
+  description?: string;
 }
 
 export interface PipeSkin {
