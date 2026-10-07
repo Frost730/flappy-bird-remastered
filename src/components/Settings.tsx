@@ -114,28 +114,28 @@ export const Settings: React.FC<SettingsProps> = ({ settings, setSettings, onRes
                 name: '🚀 Dynamic (Recommended)',
                 badge: 'Progression',
                 badgeColor: 'border-violet-500/40 text-violet-300 bg-violet-500/10',
-                desc: 'Starts Easy (0-19), escalates to Medium (20-49), and hits Hard (50+). Longer, well-paced phases!'
+                desc: 'Starts Easy (0-19), escalates to Medium (20-49), and hits Hard (50+). Coins scale from rare up to an abundant bounty!'
               },
               {
                 id: 'easy',
                 name: '🌱 Easy Mode',
-                badge: 'Casual',
+                badge: 'Casual (Rare Coins)',
                 badgeColor: 'border-emerald-500/40 text-emerald-300 bg-emerald-500/10',
-                desc: 'Generous 182px pipe gaps, gentle flight speed, relaxed spacing. Great for practice and warming up.'
+                desc: 'Generous 182px pipe gaps and gentle flight speed. Coins are rare (~22% spawn) to keep progression balanced.'
               },
               {
                 id: 'medium',
                 name: '⚡ Medium Mode',
-                badge: 'Classic',
+                badge: 'Classic (Balanced)',
                 badgeColor: 'border-amber-500/40 text-amber-300 bg-amber-500/10',
-                desc: 'Standard authentic Flappy Bird challenge with 156px gaps and balanced scroll speed.'
+                desc: 'Standard authentic Flappy Bird challenge with 156px gaps and balanced coin spawns (~50%).'
               },
               {
                 id: 'hard',
                 name: '🔥 Hard Mode',
-                badge: 'Expert (Passable)',
+                badge: 'Expert (Coin Bounty)',
                 badgeColor: 'border-rose-500/40 text-rose-300 bg-rose-500/10',
-                desc: 'Fast adrenaline-fueled flight with tight 138px gaps. Demanding reflexes, but strictly never impossible.'
+                desc: 'Fast adrenaline-fueled flight with tight 138px gaps. High-stakes rich coin bounty (~85% spawn)!'
               }
             ].map((d) => {
               const isSelected = (settings.difficulty || 'dynamic') === d.id;

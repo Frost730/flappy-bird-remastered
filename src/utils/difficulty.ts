@@ -7,6 +7,7 @@ export interface DifficultyConfig {
   gapSize: number;
   pipeSpacing: number;
   maxDeltaY: number;
+  coinSpawnRate: number; // Spawn probability [0, 1]
   tier: DifficultyTier;
   tierLabel: string;
   tierEmoji: string;
@@ -22,6 +23,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       gapSize: 182,
       pipeSpacing: 290,
       maxDeltaY: 95,
+      coinSpawnRate: 0.22, // Rare coins in Easy mode
       tier: 'easy',
       tierLabel: 'Easy',
       tierEmoji: '🌱'
@@ -34,6 +36,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       gapSize: 156,
       pipeSpacing: 250,
       maxDeltaY: 120,
+      coinSpawnRate: 0.50, // Balanced coins in Medium mode
       tier: 'medium',
       tierLabel: 'Medium',
       tierEmoji: '⚡'
@@ -46,6 +49,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       gapSize: 138,
       pipeSpacing: 220,
       maxDeltaY: 138,
+      coinSpawnRate: 0.85, // Abundant bounty in Hard mode (high risk, high reward)
       tier: 'hard',
       tierLabel: 'Hard',
       tierEmoji: '🔥'
@@ -53,7 +57,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
   }
 
   // Dynamic Mode: Easy (0-19) -> Medium (20-49) -> Hard (50+)
-  // Extended durations so each difficulty stays longer and feels substantial
+  // Coins start rare in Easy, become balanced in Medium, and abundant in Hard
   if (score < DYNAMIC_EASY_THRESHOLD) {
     const p = score / DYNAMIC_EASY_THRESHOLD;
     return {
@@ -61,6 +65,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       gapSize: Math.round(186 - p * 16), // 186 -> 170
       pipeSpacing: Math.round(295 - p * 25), // 295 -> 270
       maxDeltaY: 90 + p * 18, // 90 -> 108
+      coinSpawnRate: 0.18 + p * 0.10, // Rare: 18% -> 28%
       tier: 'easy',
       tierLabel: 'Easy',
       tierEmoji: '🌱'
@@ -72,6 +77,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       gapSize: Math.round(166 - p * 18), // 166 -> 148
       pipeSpacing: Math.round(265 - p * 25), // 265 -> 240
       maxDeltaY: 110 + p * 18, // 110 -> 128
+      coinSpawnRate: 0.35 + p * 0.25, // Balanced: 35% -> 60%
       tier: 'medium',
       tierLabel: 'Medium',
       tierEmoji: '⚡'
@@ -88,6 +94,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       gapSize: Math.round(145 - p * 9), // 145 -> min 136
       pipeSpacing: Math.round(235 - p * 20), // 235 -> min 215
       maxDeltaY: Math.round(130 + p * 10), // 130 -> max 140
+      coinSpawnRate: Math.min(0.90, 0.70 + p * 0.18), // Bounty: 70% -> 88%
       tier: 'hard',
       tierLabel: 'Hard',
       tierEmoji: '🔥'

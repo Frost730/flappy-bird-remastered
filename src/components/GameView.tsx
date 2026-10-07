@@ -282,9 +282,8 @@ export const GameView: React.FC<GameViewProps> = ({
           // Bound within safe ceiling and floor clearances
           topH = Math.max(minPipeH, Math.min(maxPipeH, topH));
 
-          // Coin spawn chance scales gracefully with difficulty
-          const coinProb = diff.tier === 'easy' ? 0.72 : diff.tier === 'medium' ? 0.60 : 0.48;
-          const hasCoin = Math.random() < coinProb;
+          // Coin spawn chance scales with difficulty (rare on easy, bounty on hard)
+          const hasCoin = Math.random() < diff.coinSpawnRate;
 
           current.pipes.push({
             x: V_WIDTH,
