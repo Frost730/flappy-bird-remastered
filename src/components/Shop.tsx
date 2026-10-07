@@ -140,16 +140,25 @@ export const Shop: React.FC<ShopProps> = ({
         {/* 1. BIRD SKINS TAB */}
         {activeTab === 'birds' &&
           BIRD_SKINS.map((bird) => {
-            const isUnlocked = unlockedBirds.includes(bird.id);
+            const isUnlocked = bird.id === 'random' || bird.cost === 0 || unlockedBirds.includes(bird.id);
             const isActive = settings.currentBird === bird.id;
             return (
               <div
                 key={bird.id}
                 className={`glass-panel p-5 rounded-2xl flex flex-col justify-between border transition-all duration-300 hover:scale-[1.02] ${
-                  isActive ? 'border-violet-500 shadow-md shadow-violet-500/10' : 'border-slate-800 hover:border-slate-700'
+                  isActive
+                    ? 'border-violet-500 shadow-md shadow-violet-500/10'
+                    : bird.id === 'random'
+                    ? 'border-pink-500/40 bg-gradient-to-b from-pink-500/5 to-slate-900/60 hover:border-pink-500/60'
+                    : 'border-slate-800 hover:border-slate-700'
                 }`}
               >
                 <div className="flex flex-col items-center">
+                  {bird.id === 'random' && (
+                    <span className="mb-2 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border border-pink-500/40 text-pink-300 bg-pink-500/10 shadow-sm flex items-center gap-1">
+                      <Dices className="w-3 h-3 text-pink-400" /> Surprise Roulette
+                    </span>
+                  )}
                   {/* Bird Preview (Procedural Visual Box) */}
                   <div className="w-24 h-24 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-center relative mb-4 overflow-hidden shadow-inner">
                     <div className="absolute inset-0 bg-radial-gradient from-violet-500/10 to-transparent"></div>

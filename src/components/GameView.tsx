@@ -74,21 +74,23 @@ export const GameView: React.FC<GameViewProps> = ({
   const [playerName, setPlayerName] = useState('');
 
   // Resolve bird skin for the run (supports random skin rolls on each play)
+  const defaultBird = BIRD_SKINS.find((b) => b.id === 'classic') || BIRD_SKINS[0];
+
   const pickSkin = () => {
     if (birdSkinId === 'random') {
       const candidates = (unlockedBirds || ['classic']).filter((id) => id !== 'random');
       const chosenId = candidates.length > 0
         ? candidates[Math.floor(Math.random() * candidates.length)]
         : 'classic';
-      return BIRD_SKINS.find((b) => b.id === chosenId) || BIRD_SKINS[0];
+      return BIRD_SKINS.find((b) => b.id === chosenId) || defaultBird;
     }
-    return BIRD_SKINS.find((b) => b.id === birdSkinId) || BIRD_SKINS[0];
+    return BIRD_SKINS.find((b) => b.id === birdSkinId) || defaultBird;
   };
 
   // References for mutable game loop state (avoids closure stale references)
   const stateRef = useRef({
     gameState: 'MENU' as GameState,
-    activeSkin: BIRD_SKINS.find((b) => b.id === (birdSkinId === 'random' ? 'classic' : birdSkinId)) || BIRD_SKINS[0],
+    activeSkin: BIRD_SKINS.find((b) => b.id === (birdSkinId === 'random' ? 'classic' : birdSkinId)) || defaultBird,
     birdY: 250,
     birdVelocity: 0,
     birdFlapTick: 0,

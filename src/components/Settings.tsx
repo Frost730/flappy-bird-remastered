@@ -121,7 +121,7 @@ export const Settings: React.FC<SettingsProps> = ({ settings, setSettings, onRes
                 name: '🌱 Easy Mode',
                 badge: 'Casual (Rare Coins)',
                 badgeColor: 'border-emerald-500/40 text-emerald-300 bg-emerald-500/10',
-                desc: 'Generous 182px pipe gaps and gentle flight speed. Coins are rare (~22% spawn) to keep progression balanced.'
+                desc: 'Generous 182px pipe gaps and gentle flight speed. Coins are ultra rare (~8% spawn) to keep progression balanced.'
               },
               {
                 id: 'medium',

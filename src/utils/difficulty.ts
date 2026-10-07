@@ -23,7 +23,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       gapSize: 182,
       pipeSpacing: 290,
       maxDeltaY: 95,
-      coinSpawnRate: 0.22, // Rare coins in Easy mode
+      coinSpawnRate: 0.08, // Very rare coins in Easy mode (~8% chance, ~1 coin per 12 pipes)
       tier: 'easy',
       tierLabel: 'Easy',
       tierEmoji: '🌱'
@@ -57,7 +57,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
   }
 
   // Dynamic Mode: Easy (0-19) -> Medium (20-49) -> Hard (50+)
-  // Coins start rare in Easy, become balanced in Medium, and abundant in Hard
+  // Coins start ultra-rare in Easy, become balanced in Medium, and abundant in Hard
   if (score < DYNAMIC_EASY_THRESHOLD) {
     const p = score / DYNAMIC_EASY_THRESHOLD;
     return {
@@ -65,7 +65,7 @@ export function getDifficultyConfig(score: number, mode: DifficultyMode = 'dynam
       gapSize: Math.round(186 - p * 16), // 186 -> 170
       pipeSpacing: Math.round(295 - p * 25), // 295 -> 270
       maxDeltaY: 90 + p * 18, // 90 -> 108
-      coinSpawnRate: 0.18 + p * 0.10, // Rare: 18% -> 28%
+      coinSpawnRate: 0.05 + p * 0.06, // Ultra-rare: 5% -> 11%
       tier: 'easy',
       tierLabel: 'Easy',
       tierEmoji: '🌱'

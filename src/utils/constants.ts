@@ -2,6 +2,18 @@ import type { BirdSkin, PipeSkin, ThemeSkin, Achievement } from '../types/game';
 
 export const BIRD_SKINS: BirdSkin[] = [
   {
+    id: 'random',
+    name: '🎲 Random Skin',
+    cost: 0,
+    unlocked: true,
+    color: '#ec4899',
+    wingColor: '#8b5cf6',
+    beakColor: '#eab308',
+    eyeColor: '#06b6d4',
+    special: 'random',
+    description: 'Surprise! Selects a random bird skin from your unlocked collection each run.'
+  },
+  {
     id: 'classic',
     name: 'Classic Yellow',
     cost: 0,
@@ -84,18 +96,6 @@ export const BIRD_SKINS: BirdSkin[] = [
     eyeColor: '#38bdf8',   // galactic cyan
     special: 'cosmic',
     description: 'Celestial voyager crowned with a floating astral aura.'
-  },
-  {
-    id: 'random',
-    name: '🎲 Random Skin',
-    cost: 0,
-    unlocked: true,
-    color: '#ec4899',
-    wingColor: '#8b5cf6',
-    beakColor: '#eab308',
-    eyeColor: '#06b6d4',
-    special: 'random',
-    description: 'Surprise! Selects a random bird skin from your unlocked collection each run.'
   }
 ];
 

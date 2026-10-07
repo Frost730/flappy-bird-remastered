@@ -74,7 +74,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [activeTab, setActiveTab] = useState<TabType>('play');
   const [rerollFeedback, setRerollFeedback] = useState<string | null>(null);
 
-  const activeBird = BIRD_SKINS.find((b) => b.id === settings.currentBird) || BIRD_SKINS[0];
+  const activeBird =
+    BIRD_SKINS.find((b) => b.id === settings.currentBird) ||
+    BIRD_SKINS.find((b) => b.id === 'classic') ||
+    BIRD_SKINS[0];
 
   const randomizeBird = (e: React.MouseEvent) => {
     e.stopPropagation();
